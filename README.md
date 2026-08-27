@@ -20,7 +20,7 @@ One brief, two agents, one variable. Both were asked cold for a marketing frontp
 
 **Left:** a deep-navy gradient with a CSS star field, a serif headline with one word italicized for emphasis, four accent colors, an uppercase tracked badge, a lavender pill, and further down a stat strip claiming 2.4M tracked nights and 4.9 stars from 120k reviews of an app that does not exist. Competently built, and recognizable as AI output from across the room.
 
-**Right:** warm bone ground, Geist, a glass nav, one ink pill, a single accent used only where it earns it, and a hand-drawn hypnogram labeled as illustrative data; every number below the fold is framed as a demo report rather than a claim. The screenshots only show the first fold; open [`samples/landing-with-skill.html`](samples/landing-with-skill.html) live for the part a still can't carry, because the motion is where it feels finished: a one-shot entrance, press-scale on the pill, hover nudges, all on the skill's easing system and all gone under reduced-motion.
+**Right:** warm bone ground, Geist, a glass nav, one ink pill, a single accent used only where it earns it, and a hand-drawn hypnogram labeled as illustrative data; every number below the fold is framed as a demo report rather than a claim. The screenshots only show the first fold; open [`samples/landing-with-skill.html`](samples/landing-with-skill.html) live for the part a still can't carry, because the motion is where it feels finished: a one-shot entrance, a floating nav that eases into a full-width bar once you scroll, press-scale on the pill, hover nudges, all on the skill's easing system and all gone under reduced-motion.
 
 ## What the skill locks down
 
@@ -71,7 +71,7 @@ Both Driftwell pages live in [`samples/`](samples/) (`landing-no-skill.html` and
 
 ## How it got its rules
 
-Seven correction rounds so far, each one anchored to a real piece of feedback and verified by rerunning the same brief cold:
+Eight correction rounds so far, each one anchored to a real piece of feedback and verified by rerunning the same brief cold:
 
 | Round | Correction | Rule that came out of it |
 |---|---|---|
@@ -82,5 +82,6 @@ Seven correction rounds so far, each one anchored to a real piece of feedback an
 | 5 | Tooltips and sliders weren't covered | Floating layers and controls section; native `title` banned |
 | 6 | Multi-theme sites should re-harmonize, not hardcode | Theming section with per-theme accents and eased switching |
 | 7 | "It shouldn't assume Playfair for the title" | Open axes: ask before assuming, declare defaults when you can't ask |
+| 8 | The floating nav should ease into a full bar on scroll; the footer had lost content the baseline kept | Scroll-responsive nav morph as the landing default; restraint cuts decoration, not navigation |
 
 The white-button round hides inside 6: on dark themes the primary pill is the ink token mixed 90 to 93 percent toward the ground, never pure `#fff`, because a stark white pill glows against a dark surface and reads as pasted-in.
