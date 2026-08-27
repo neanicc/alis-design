@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Workspace settings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ground: oklch(98% 0.004 85);
+    --surface: #fffdfb;
+    --ink: oklch(19% 0.008 80);
+    --text-2: oklch(50% 0.01 80);
+    --text-3: oklch(68% 0.01 80);
+    --hairline: color-mix(in oklab, var(--ink) 12%, transparent);
+    --hairline-soft: color-mix(in oklab, var(--ink) 8%, transparent);
+    --accent: #4f46e5;
+    --danger: oklch(55% 0.16 30);
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body { height: 100%; }
+
+  body {
+    font-family: "Geist", -apple-system, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ink);
+    background: var(--ground);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- Page behind the modal ---------- */
+
+  .page-nav {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 14px 32px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--hairline-soft);
+  }
+
+  .page-nav .brand { font-weight: 600; letter-spacing: -0.01em; }
+
+  .page-nav a {
+    color: var(--text-2);
+    text-decoration: none;
+    font-size: 13.5px;
+  }
+
+  .page-body {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 48px 24px;
+  }
+
+  .page-body h1 {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    margin-bottom: 12px;
+  }
+
+  .page-body p {
+    color: var(--text-2);
+    max-width: 56ch;
+    margin-bottom: 10px;
+  }
+
+  /* ---------- Overlay ---------- */
+
+  .overlay {
+    position: fixed;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 16px;
+    background: color-mix(in oklab, var(--ink) 38%, transparent);
+    backdrop-filter: blur(2px);
+    opacity: 1;
+    transition: opacity 300ms var(--ease-out);
+  }
+
+  @starting-style {
+    .overlay { opacity: 0; }
+  }
+
+  /* ---------- Modal ---------- */
+
+  .modal {
+    width: min(440px, 100%);
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow:
+      0 1px 2px color-mix(in oklab, var(--ink) 6%, transparent),
+      0 16px 32px color-mix(in oklab, var(--ink) 10%, transparent);
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 380ms var(--ease-out), transform 380ms var(--ease-out);
+  }
+
+  @starting-style {
+    .modal { opacity: 0; transform: translateY(8px); }
+  }
+
+  .modal-header { margin-bottom: 20px; }
+
+  .modal-header h2 {
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .modal-header p {
+    font-size: 13.5px;
+    color: var(--text-2);
+    margin-top: 4px;
+  }
+
+  /* ---------- Fields ---------- */
+
+  .field { margin-bottom: 18px; }
+
+  .field-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
+  .text-input,
+  .select-input {
+    width: 100%;
+    height: 38px;
+    padding: 0 12px;
+    font: inherit;
+    font-size: 14px;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: 12px;
+    transition: border-color 160ms var(--ease-out), box-shadow 160ms var(--ease-out);
+  }
+
+  .text-input:focus-visible,
+  .select-input:focus-visible {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 18%, transparent);
+  }
+
+  .select-input {
+    appearance: none;
+    padding-right: 34px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5 6 8l3.5-3.5' fill='none' stroke='%2328261f' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+  }
+
+  /* Error state */
+
+  .field-error .text-input {
+    border-color: var(--danger);
+  }
+
+  .field-error .text-input:focus-visible {
+    border-color: var(--danger);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--danger) 15%, transparent);
+  }
+
+  .helper-error {
+    display: block;
+    margin-top: 6px;
+    font-size: 13px;
+    color: var(--danger);
+  }
+
+  /* ---------- Checkbox group ---------- */
+
+  .check-group { border: 0; margin-bottom: 4px; }
+
+  .check-group legend {
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
+  .check-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .check-row + .check-row { margin-top: 10px; }
+
+  .check-row input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    accent-color: var(--ink);
+    cursor: pointer;
+  }
+
+  .check-row input[type="checkbox"]:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  .check-hint {
+    font-size: 13px;
+    color: var(--text-3);
+  }
+
+  /* ---------- Danger zone ---------- */
+
+  .danger-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--hairline-soft);
+  }
+
+  .danger-copy .danger-title {
+    font-size: 13.5px;
+    font-weight: 500;
+  }
+
+  .danger-copy .danger-sub {
+    font-size: 13px;
+    color: var(--text-3);
+  }
+
+  /* ---------- Buttons ---------- */
+
+  .btn {
+    font: inherit;
+    font-size: 13.5px;
+    font-weight: 500;
+    height: 36px;
+    padding: 0 16px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background-color 160ms var(--ease-out), border-color 160ms var(--ease-out),
+      color 160ms var(--ease-out), transform 140ms var(--ease-out);
+  }
+
+  .btn:active { transform: scale(0.97); }
+
+  .btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .btn-primary {
+    background: var(--ink);
+    color: var(--surface);
+    border: 1px solid var(--ink);
+  }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--hairline);
+  }
+
+  .btn-danger {
+    background: transparent;
+    color: var(--danger);
+    border: 1px solid color-mix(in oklab, var(--danger) 30%, transparent);
+    height: 32px;
+    padding: 0 14px;
+    font-size: 13px;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .btn-primary:hover { background: color-mix(in oklab, var(--ink) 86%, white); border-color: color-mix(in oklab, var(--ink) 86%, white); }
+    .btn-ghost:hover { background: color-mix(in oklab, var(--ink) 5%, transparent); }
+    .btn-danger:hover {
+      background: color-mix(in oklab, var(--danger) 8%, transparent);
+      border-color: color-mix(in oklab, var(--danger) 50%, transparent);
+    }
+  }
+
+  /* ---------- Footer ---------- */
+
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--hairline-soft);
+  }
+
+  /* ---------- Preference guards ---------- */
+
+  @media (prefers-reduced-motion: reduce) {
+    .overlay, .modal, .btn, .text-input, .select-input { transition: none; }
+    .btn:active { transform: none; }
+  }
+
+  @media (prefers-reduced-transparency: reduce) {
+    .overlay { backdrop-filter: none; }
+  }
+
+  @media (prefers-contrast: more) {
+    :root {
+      --hairline: color-mix(in oklab, var(--ink) 32%, transparent);
+      --hairline-soft: color-mix(in oklab, var(--ink) 24%, transparent);
+    }
+  }
+</style>
+</head>
+<body>
+
+  <!-- Dimmed page behind the modal -->
+  <nav class="page-nav" aria-hidden="true">
+    <span class="brand">Acme</span>
+    <a href="#">Projects</a>
+    <a href="#">Members</a>
+    <a href="#">Billing</a>
+  </nav>
+  <main class="page-body" aria-hidden="true">
+    <h1>Projects</h1>
+    <p>Everything your team is working on right now, grouped by workspace. Open a project to see drafts, activity, and who's editing.</p>
+    <p>Recently active: Launch site refresh, Q3 onboarding flow, and the pricing page experiment.</p>
+  </main>
+
+  <!-- Modal -->
+  <div class="overlay">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="ws-title">
+      <header class="modal-header">
+        <h2 id="ws-title">Workspace settings</h2>
+        <p>Changes apply to everyone in this workspace.</p>
+      </header>
+
+      <form>
+        <div class="field field-error">
+          <label class="field-label" for="ws-name">Workspace name</label>
+          <input class="text-input" type="text" id="ws-name" value="Acme HQ"
+                 aria-invalid="true" aria-describedby="ws-name-error">
+          <span class="helper-error" id="ws-name-error">That name is already taken in your organization.</span>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="ws-role">Default member role</label>
+          <select class="select-input" id="ws-role">
+            <option>Owner</option>
+            <option selected>Admin</option>
+            <option>Editor</option>
+            <option>Viewer</option>
+          </select>
+        </div>
+
+        <fieldset class="field check-group">
+          <legend>Notifications</legend>
+          <label class="check-row">
+            <input type="checkbox" checked>
+            <span>Email notifications</span>
+          </label>
+          <label class="check-row">
+            <input type="checkbox">
+            <span>Weekly digest <span class="check-hint">— Mondays at 9am</span></span>
+          </label>
+        </fieldset>
+
+        <div class="danger-row">
+          <div class="danger-copy">
+            <div class="danger-title">Delete workspace</div>
+            <div class="danger-sub">This can't be undone.</div>
+          </div>
+          <button type="button" class="btn btn-danger">Delete</button>
+        </div>
+
+        <footer class="modal-footer">
+          <button type="button" class="btn btn-ghost">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save changes</button>
+        </footer>
+      </form>
+    </div>
+  </div>
+
+</body>
+</html>
