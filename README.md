@@ -71,7 +71,7 @@ Both Driftwell pages live in [`samples/`](samples/) (`landing-no-skill.html` and
 
 ## How it got its rules
 
-Nine correction rounds so far, each one anchored to a real piece of feedback and verified by rerunning the same brief cold:
+Ten correction rounds so far, each one anchored to a real piece of feedback and verified by rerunning the same brief cold:
 
 | Round | Correction | Rule that came out of it |
 |---|---|---|
@@ -84,5 +84,6 @@ Nine correction rounds so far, each one anchored to a real piece of feedback and
 | 7 | "It shouldn't assume Playfair for the title" | Open axes: ask before assuming, declare defaults when you can't ask |
 | 8 | The floating nav should ease into a full bar on scroll; the footer had lost content the baseline kept | Scroll-responsive nav morph as the landing default; restraint cuts decoration, not navigation |
 | 9 | "The dropdown should be the exact same one" as an earlier project's, same motion and look | Custom combobox + listbox recipe (180ms scale-from-0.95 pop, rotating chevron, one moving highlight, accent checkmark); native `<select>` banned |
+| 10 | "The custom drawn is very nice" — a side-by-side of two checkbox styles, and the drawn one won | Drawn 18px checkbox over `accent-color`-tinted native: hidden native input, ink fill, tick scaling 0.8 → 1, accent focus ring; radios follow |
 
 The white-button round hides inside 6: on dark themes the primary pill is the ink token mixed 90 to 93 percent toward the ground, never pure `#fff`, because a stark white pill glows against a dark surface and reads as pasted-in.

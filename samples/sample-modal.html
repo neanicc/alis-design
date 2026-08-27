@@ -309,18 +309,41 @@
     padding: 5px 0; /* rows land on a 10px rhythm */
     cursor: pointer;
   }
+  /* Drawn checkbox: hidden native input keeps semantics and keyboard;
+     the aria-hidden box carries the look. */
   .check-row input[type="checkbox"] {
-    width: 16px;
-    height: 16px;
-    margin-top: 2px; /* optical align with first text line */
-    accent-color: var(--ink);
-    flex: none;
-    cursor: pointer;
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
   }
-  .check-row input[type="checkbox"]:focus-visible {
-    outline: none;
+  .check-box {
+    flex: none;
+    width: 18px;
+    height: 18px;
+    margin-top: 1px; /* optical align with first text line */
+    border: 1px solid var(--hairline-strong);
+    border-radius: 5px;
+    background: var(--surface);
+    display: grid;
+    place-items: center;
+    transition: background-color 140ms var(--ease-out-strong),
+      border-color 140ms var(--ease-out-strong);
+  }
+  .check-box svg {
+    color: var(--ground);
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 140ms var(--ease-out-strong), transform 140ms var(--ease-out-strong);
+  }
+  .check-row input:checked + .check-box {
+    background: var(--ink);
+    border-color: var(--ink);
+  }
+  .check-row input:checked + .check-box svg { opacity: 1; transform: scale(1); }
+  .check-row input:focus-visible + .check-box {
+    border-color: var(--accent);
     box-shadow: 0 0 0 3px var(--focus-ring);
-    border-radius: 4px;
   }
   .check-row .check-label { font-size: 14px; }
   .check-row .check-desc {
@@ -393,7 +416,8 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .modal, .scrim, .btn, .control, .app-nav a, .select-trigger .chev { transition: none; }
+    .modal, .scrim, .btn, .control, .app-nav a, .select-trigger .chev,
+    .check-box, .check-box svg { transition: none; }
     .btn:active { transform: none; }
     .select-menu:not([hidden]) { animation: none; }
   }
@@ -495,6 +519,12 @@
           <legend>Notifications</legend>
           <label class="check-row" for="reminders">
             <input type="checkbox" id="reminders" name="reminders" checked>
+            <span class="check-box" aria-hidden="true">
+              <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+                <path d="M1 4.2 L3.6 6.8 L9 1.2" stroke="currentColor" stroke-width="1.6"
+                      stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
             <span>
               <span class="check-label">Meeting reminders</span>
               <span class="check-desc" style="display:block">A nudge the day before each meeting.</span>
@@ -502,6 +532,12 @@
           </label>
           <label class="check-row" for="recap">
             <input type="checkbox" id="recap" name="recap">
+            <span class="check-box" aria-hidden="true">
+              <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+                <path d="M1 4.2 L3.6 6.8 L9 1.2" stroke="currentColor" stroke-width="1.6"
+                      stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
             <span>
               <span class="check-label">Monthly recap email</span>
               <span class="check-desc" style="display:block">What the club read, rated, and picked next.</span>
