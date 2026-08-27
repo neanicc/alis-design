@@ -32,7 +32,9 @@ Some axes are taste; others are per-project freedom, and an agent guessing on th
 
 ## Prerequisites
 
-`alis-design` works on its own, but it names companion skills and expects them for full effect, especially the motion passes. Install these first:
+**None, strictly: the skill works with nothing else installed. Every sample in this repo — both Driftwell pages included — was built from `SKILL.md` alone, no companion skills loaded.** What the companions add is the judgment beyond the recipes. A full landing-page build with everything installed layers like this: alis-design loads and asks its open-axes questions → hallmark structures the page (its palette and type picks vetoed by the tokens) → the build itself follows the recipes → the motion pass loads emil-design-eng, plus apple-design if anything is gestural or glassy → dataviz if there's a chart → the verify loop screenshots desktop and 375px. Without the companions you get the recipes; with them you get the recipes plus a specialist reviewing each layer.
+
+Install these for full effect:
 
 - **emil-design-eng** and **apple-design**, from [emilkowalski/skills](https://github.com/emilkowalski/skills). The first encodes [Emil Kowalski](https://emilkowal.ski/)'s design engineering philosophy from [animations.dev](https://animations.dev/); it's where the press-scale, tooltip-timing, and "should this animate at all" discipline comes from, and this skill requires it for any motion or interaction pass. The second distills Apple's WWDC design talks (chiefly *Designing Fluid Interfaces*, 2018) into web terms, and it's required whenever gestures, springs, translucent materials, or reduced-motion behavior are in scope.
 
