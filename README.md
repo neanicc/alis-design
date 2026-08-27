@@ -14,13 +14,13 @@ This skill is the layer that pins those variables. It routes motion questions to
 
 One brief, two agents, one variable. Both were asked cold for a marketing frontpage for Driftwell, a fictional sleep-tracking app. The first agent was told to use no skills at all; the second read `SKILL.md` and nothing else. Neither page was edited afterward.
 
-**Without the skill.** A deep-navy gradient with a CSS star field, a serif headline with one word italicized for emphasis, four accent colors, an uppercase tracked badge, a lavender pill, and a stat strip claiming 2.4M tracked nights and 4.9 stars from 120k reviews of an app that does not exist. Competently built, and recognizable as AI output from across the room.
+| Without the skill | With the skill |
+|---|---|
+| ![Without the skill](assets/before-landing.png) | ![With the skill](assets/after-landing.png) |
 
-![Without the skill](assets/before-landing.png)
+**Left:** a deep-navy gradient with a CSS star field, a serif headline with one word italicized for emphasis, four accent colors, an uppercase tracked badge, a lavender pill, and further down a stat strip claiming 2.4M tracked nights and 4.9 stars from 120k reviews of an app that does not exist. Competently built, and recognizable as AI output from across the room.
 
-**With the skill.** Warm bone ground, Geist, a glass nav, one ink pill, hairline cards, a single accent used only where it earns it. The one signature element is a hand-drawn hypnogram labeled as illustrative data, every number on the page is framed as a demo report rather than a claim, and the footer admits the product is fictional. Same model, same brief.
-
-![With the skill](assets/after-landing.png)
+**Right:** warm bone ground, Geist, a glass nav, one ink pill, a single accent used only where it earns it, and a hand-drawn hypnogram labeled as illustrative data; every number below the fold is framed as a demo report rather than a claim. The screenshots only show the first fold; open [`samples/landing-with-skill.html`](samples/landing-with-skill.html) live for the part a still can't carry, because the motion is where it feels finished: a one-shot entrance, press-scale on the pill, hover nudges, all on the skill's easing system and all gone under reduced-motion.
 
 ## What the skill locks down
 
@@ -51,7 +51,7 @@ Some axes are taste; others are per-project freedom, and an agent guessing on th
 
 - **dataviz** ships built into Claude Code, so there's nothing to install; the skill routes chart and dashboard-tile work to it automatically.
 
-This skill wouldn't be possible without those. Emil's motion discipline, the Apple fluidity rules, and Hallmark's structural anti-slop gates are the expertise it builds on; all it adds is the personal layer they can't know. If you use it, go star [emilkowalski/skills](https://github.com/emilkowalski/skills) and [nutlope/hallmark](https://github.com/nutlope/hallmark). They earned it.
+This skill wouldn't be possible without those. Emil's motion discipline, the Apple fluidity rules, and Hallmark's structural anti-slop gates are the expertise it builds on; all it adds is the personal layer they can't know. If you use it, go star [emilkowalski/skills](https://github.com/emilkowalski/skills), [nutlope/hallmark](https://github.com/nutlope/hallmark), and Anthropic's [claude-code](https://github.com/anthropics/claude-code) and [skills](https://github.com/anthropics/skills) repos. They earned it.
 
 ## Install
 
