@@ -1,0 +1,533 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Driftwell</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ---- Tokens (cream, single warm light theme) ---- */
+  :root {
+    --ground: oklch(98% 0.004 85);
+    --surface: #fffdfb;
+    --ink: oklch(19% 0.008 80);
+    --accent: #b44b3d;
+    --success: oklch(52% 0.10 155);
+
+    --text-2: color-mix(in oklab, var(--ink) 62%, var(--ground));
+    --text-3: color-mix(in oklab, var(--ink) 46%, var(--ground));
+    --hairline: color-mix(in oklab, var(--ink) 12%, transparent);
+    --hairline-soft: color-mix(in oklab, var(--ink) 8%, transparent);
+    --pill-fill: color-mix(in oklab, var(--ink) 6%, var(--surface));
+    --glass: color-mix(in srgb, var(--surface) 68%, transparent);
+
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @media (prefers-contrast: more) {
+    :root {
+      --hairline: color-mix(in oklab, var(--ink) 45%, transparent);
+      --hairline-soft: color-mix(in oklab, var(--ink) 35%, transparent);
+      --text-2: var(--ink);
+      --text-3: color-mix(in oklab, var(--ink) 70%, var(--ground));
+    }
+  }
+
+  /* ---- Base ---- */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: "Geist", -apple-system, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection { background: color-mix(in oklab, var(--accent) 22%, var(--ground)); }
+
+  .wrap {
+    width: min(1080px, calc(100% - 40px));
+    margin-inline: auto;
+  }
+
+  h1, h2, h3 { letter-spacing: -0.015em; font-weight: 600; }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  /* ---- Links: ink + animated underline ---- */
+  .link {
+    position: relative;
+    color: var(--text-2);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 14.5px;
+    transition: color 150ms ease, translate 150ms var(--ease-out);
+  }
+  .link::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -3px;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 300ms var(--ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .link:hover { color: var(--ink); translate: 0 -1px; }
+    .link:hover::after { transform: scaleX(1); }
+  }
+
+  /* ---- Nav: floating glass ---- */
+  .nav {
+    position: sticky;
+    top: 14px;
+    z-index: 10;
+    width: min(1080px, calc(100% - 40px));
+    margin-inline: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 12px 20px;
+    border: 1px solid var(--hairline);
+    border-radius: 16px;
+    background: var(--glass);
+    -webkit-backdrop-filter: blur(18px) saturate(1.5);
+    backdrop-filter: blur(18px) saturate(1.5);
+    box-shadow: 0 1px 2px color-mix(in oklab, var(--ink) 5%, transparent),
+                0 12px 28px color-mix(in oklab, var(--ink) 4%, transparent);
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    .nav { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; }
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 17px;
+    letter-spacing: -0.01em;
+  }
+  .brand svg { display: block; margin-top: 1px; }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 26px;
+  }
+
+  /* ---- Buttons ---- */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    background: var(--ink);
+    color: var(--ground);
+    border: none;
+    border-radius: 999px;
+    padding: 13px 26px;
+    font: 500 15.5px/1 inherit;
+    font-family: inherit;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 160ms ease, transform 140ms var(--ease-out);
+  }
+  .btn .arrow { transition: translate 150ms var(--ease-out); }
+  @media (hover: hover) and (pointer: fine) {
+    .btn:hover { background: color-mix(in oklab, var(--ink) 86%, var(--ground)); }
+    .btn:hover .arrow { translate: 2px 0; }
+  }
+  .btn:active { transform: scale(0.97); }
+
+  /* ---- Entrances (once per mount) ---- */
+  .rise {
+    opacity: 1;
+    translate: 0 0;
+    transition: opacity 450ms ease, translate 450ms var(--ease-out);
+  }
+  @starting-style {
+    .rise { opacity: 0; translate: 0 8px; }
+  }
+  .rise-2 { transition-delay: 70ms; }
+  .rise-3 { transition-delay: 140ms; }
+  .rise-4 { transition-delay: 220ms; }
+
+  /* ---- Hero ---- */
+  .hero {
+    padding: 104px 0 40px;
+    text-align: center;
+  }
+  .hero h1 {
+    font-size: clamp(2.5rem, 6vw, 3.7rem);
+    line-height: 1.06;
+    letter-spacing: -0.02em;
+    max-width: 14ch;
+    margin-inline: auto;
+    text-wrap: balance;
+  }
+  .hero .sub {
+    margin: 22px auto 0;
+    max-width: 52ch;
+    color: var(--text-2);
+    font-size: 17.5px;
+  }
+  .hero-actions {
+    margin-top: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 28px;
+    flex-wrap: wrap;
+  }
+
+  /* ---- Signature: example-night hypnogram ---- */
+  .hypno-card {
+    margin: 72px auto 0;
+    max-width: 860px;
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: 16px;
+    padding: 26px 28px 22px;
+    text-align: left;
+  }
+  .hypno-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+  }
+  .hypno-head h2 { font-size: 16px; font-weight: 600; }
+  .hypno-scroll { overflow-x: auto; }
+  .hypno-inner { min-width: 520px; }
+  .hypno { width: 100%; height: auto; color: var(--ink); display: block; }
+  .hypno .grid-line { stroke: currentColor; opacity: 0.1; stroke-width: 1; }
+  .hypno .trace { stroke: currentColor; stroke-width: 2; fill: none; stroke-linejoin: round; stroke-linecap: round; }
+  .hypno text { fill: var(--text-3); font-size: 11px; font-weight: 500; }
+  .hypno-times {
+    display: flex;
+    justify-content: space-between;
+    padding-left: 9%;
+    margin-top: 10px;
+    color: var(--text-3);
+    font-size: 12px;
+  }
+  .hypno-note {
+    margin-top: 14px;
+    color: var(--text-3);
+    font-size: 12.5px;
+  }
+
+  /* ---- Status pill (sanctioned pattern) ---- */
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 20px;
+    padding: 0 11px;
+    border-radius: 999px;
+    background: var(--pill-fill);
+    color: var(--ink);
+    font-size: 11px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .status-pill .dot {
+    width: 6px; height: 6px;
+    border-radius: 999px;
+    background: var(--success);
+  }
+
+  /* ---- Sections ---- */
+  .section { padding: 96px 0 0; }
+  .section-head { max-width: 56ch; }
+  .section-head h2 { font-size: clamp(1.55rem, 3vw, 1.95rem); line-height: 1.2; }
+  .section-head p { margin-top: 10px; color: var(--text-2); }
+
+  /* ---- Features ---- */
+  .features {
+    margin-top: 36px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+  .feature {
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: 16px;
+    padding: 26px 24px 28px;
+  }
+  .feature .icon {
+    width: 38px; height: 38px;
+    display: grid;
+    place-items: center;
+    border-radius: 11px;
+    background: var(--pill-fill);
+    color: var(--ink);
+    margin-bottom: 18px;
+  }
+  .feature h3 { font-size: 16.5px; margin-bottom: 8px; }
+  .feature p { color: var(--text-2); font-size: 14.5px; }
+
+  /* ---- Sample report strip ---- */
+  .report {
+    margin-top: 36px;
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: 16px;
+    padding: 26px 28px;
+  }
+  .report-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .report-head h3 { font-size: 16px; }
+  .report-tiles {
+    margin-top: 22px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+  .tile {
+    border: 1px solid var(--hairline-soft);
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .tile .num {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.15;
+    white-space: nowrap;
+  }
+  .tile .lbl { margin-top: 4px; color: var(--text-3); font-size: 13px; }
+  .report-note { margin-top: 18px; color: var(--text-3); font-size: 12.5px; }
+
+  /* ---- Closing CTA ---- */
+  .closing {
+    padding: 104px 0 24px;
+    text-align: center;
+  }
+  .closing h2 { font-size: clamp(1.7rem, 3.4vw, 2.2rem); max-width: 22ch; margin-inline: auto; }
+  .closing p { margin: 14px auto 0; max-width: 46ch; color: var(--text-2); }
+  .closing .btn { margin-top: 28px; }
+
+  /* ---- Footer ---- */
+  footer {
+    margin-top: 88px;
+    border-top: 1px solid var(--hairline);
+  }
+  .foot-inner {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 32px;
+    padding: 36px 0 44px;
+    flex-wrap: wrap;
+  }
+  .foot-left { max-width: 34ch; }
+  .foot-left .brand { font-size: 16px; }
+  .foot-left p { margin-top: 10px; color: var(--text-3); font-size: 13px; }
+  .foot-links { display: flex; gap: 26px; }
+  .foot-links .link { font-size: 13.5px; }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 860px) {
+    .features { grid-template-columns: 1fr; }
+    .report-tiles { grid-template-columns: repeat(2, 1fr); }
+    .section { padding-top: 68px; }
+    .hero { padding-top: 76px; }
+    .hypno-card { margin-top: 52px; }
+  }
+  @media (max-width: 620px) {
+    .nav-links .link { display: none; }
+    .nav-links .link:last-child { display: inline-block; }
+    .hero .sub { font-size: 16px; }
+    .report-tiles { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .tile { padding: 14px 15px; }
+    .tile .num { font-size: 20px; }
+    .report { padding: 22px 20px; }
+    .hypno-card { padding: 22px 20px 18px; }
+  }
+
+  /* ---- Reduced motion ---- */
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+  <header class="nav rise">
+    <a class="brand" href="#" aria-label="Driftwell home">
+      <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+        <path d="M14.5 11.2A6.6 6.6 0 0 1 6.8 3.5a6.6 6.6 0 1 0 7.7 7.7Z"
+              fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+      </svg>
+      Driftwell
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a class="link" href="#features">Features</a>
+      <a class="link" href="#report">Morning report</a>
+      <a class="link" href="#get">Get Driftwell</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero wrap">
+      <h1 class="rise rise-2">Your nights, drawn clearly</h1>
+      <p class="sub rise rise-3">Driftwell tracks your sleep from the nightstand — no wearable, no scores to chase — and turns each night into a morning report you can actually read.</p>
+      <div class="hero-actions rise rise-4">
+        <a class="btn" href="#get">Start tracking tonight <span class="arrow" aria-hidden="true">→</span></a>
+        <a class="link" href="#report">See a sample report</a>
+      </div>
+
+      <figure class="hypno-card rise rise-4">
+        <div class="hypno-head">
+          <h2>An example night, as Driftwell draws it</h2>
+          <span class="status-pill"><span class="dot" aria-hidden="true"></span>Report ready</span>
+        </div>
+        <div class="hypno-scroll">
+        <div class="hypno-inner">
+        <svg class="hypno" viewBox="0 0 680 160" role="img" aria-label="Illustrative sleep-stage chart for one demo night, stepping between awake, REM, light, and deep sleep from 11 pm to 7 am">
+          <line class="grid-line" x1="56" y1="20"  x2="680" y2="20"/>
+          <line class="grid-line" x1="56" y1="60"  x2="680" y2="60"/>
+          <line class="grid-line" x1="56" y1="100" x2="680" y2="100"/>
+          <line class="grid-line" x1="56" y1="140" x2="680" y2="140"/>
+          <text x="0" y="24">Awake</text>
+          <text x="0" y="64">REM</text>
+          <text x="0" y="104">Light</text>
+          <text x="0" y="144">Deep</text>
+          <path class="trace" d="M60,20 H84 V100 H140 V140 H200 V100 H240 V60 H285 V100 H330 V140 H395 V100 H435 V60 H495 V100 H525 V20 H535 V100 H570 V60 H645 V20 H680"/>
+        </svg>
+        <div class="hypno-times" aria-hidden="true">
+          <span>11 pm</span><span>1 am</span><span>3 am</span><span>5 am</span><span>7 am</span>
+        </div>
+        </div>
+        </div>
+        <figcaption class="hypno-note">Illustrative data — a hand-drawn demo night, not a measurement.</figcaption>
+      </figure>
+    </section>
+
+    <section class="section wrap" id="features">
+      <div class="section-head">
+        <h2>Tracking that stays out of your way</h2>
+        <p>No straps, no charging rituals, no guilt-trip streaks. Driftwell sits on the nightstand and does its work quietly.</p>
+      </div>
+      <div class="features">
+        <article class="feature">
+          <div class="icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
+              <path d="M16 12.4A7.2 7.2 0 0 1 7.6 4a7.2 7.2 0 1 0 8.4 8.4Z"
+                    fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3>Track from the nightstand</h3>
+          <p>Your phone's motion and sound sensing is enough. Nothing on your wrist, nothing under the mattress, and audio never leaves the device.</p>
+        </article>
+        <article class="feature">
+          <div class="icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
+              <path d="M2 12.5h3l2-6 3 8 2.5-5H18" fill="none" stroke="currentColor"
+                    stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3>See the shape of your night</h3>
+          <p>Every morning you get one clear picture: when you drifted off, how the stages flowed, and where the night broke — no composite score attached.</p>
+        </article>
+        <article class="feature">
+          <div class="icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
+              <path d="M10 3v2M4.9 4.9l1.4 1.4M3 10h2M15 10h2M13.7 6.3l1.4-1.4M6 14a4 4 0 1 1 8 0"
+                    fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+              <path d="M3.5 17h13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3>Wake in a gentler window</h3>
+          <p>Set a wake-by time and Driftwell eases the alarm in when you're already surfacing from light sleep, instead of cutting into the deep end.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section wrap" id="report">
+      <div class="section-head">
+        <h2>What a morning report looks like</h2>
+        <p>Four numbers and a picture — enough to understand the night, short enough to read before coffee.</p>
+      </div>
+      <div class="report">
+        <div class="report-head">
+          <h3>Last night · demo data</h3>
+          <span class="status-pill"><span class="dot" aria-hidden="true"></span>Synced 7:02 am</span>
+        </div>
+        <div class="report-tiles">
+          <div class="tile">
+            <div class="num">7h 42m</div>
+            <div class="lbl">Time asleep</div>
+          </div>
+          <div class="tile">
+            <div class="num">1h 31m</div>
+            <div class="lbl">Deep sleep</div>
+          </div>
+          <div class="tile">
+            <div class="num">4</div>
+            <div class="lbl">Brief wakes</div>
+          </div>
+          <div class="tile">
+            <div class="num">11:24 pm</div>
+            <div class="lbl">Drifted off</div>
+          </div>
+        </div>
+        <p class="report-note">Sample report from a demo night. Driftwell shows your own numbers — it makes no claims about averages, improvements, or anyone else's sleep.</p>
+      </div>
+    </section>
+
+    <section class="closing wrap" id="get">
+      <h2>Tonight is a fine night to start</h2>
+      <p>Put your phone on the nightstand, plug it in, and let the first report explain itself in the morning.</p>
+      <a class="btn" href="#">Get Driftwell <span class="arrow" aria-hidden="true">→</span></a>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap foot-inner">
+      <div class="foot-left">
+        <a class="brand" href="#" aria-label="Driftwell home">
+          <svg width="16" height="16" viewBox="0 0 18 18" aria-hidden="true">
+            <path d="M14.5 11.2A6.6 6.6 0 0 1 6.8 3.5a6.6 6.6 0 1 0 7.7 7.7Z"
+                  fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+          </svg>
+          Driftwell
+        </a>
+        <p>Driftwell is a fictional product, built as a design demo. Any resemblance to a real app is accidental.</p>
+      </div>
+      <nav class="foot-links" aria-label="Footer">
+        <a class="link" href="#features">Features</a>
+        <a class="link" href="#report">Morning report</a>
+        <a class="link" href="#">Privacy</a>
+        <a class="link" href="#">Contact</a>
+      </nav>
+    </div>
+  </footer>
+
+</body>
+</html>

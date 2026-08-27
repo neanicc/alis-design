@@ -12,24 +12,15 @@ This skill is the layer that pins those variables. It routes motion questions to
 
 ## Before and after
 
-Same brief, both agents, one variable. Each was asked cold for a class-booking dashboard for a fictional pottery studio; the left agent was told to use no skills at all and the right agent read `SKILL.md` and nothing else. Neither output was edited afterward. The left result is worth naming: cream ground, terracotta accent, tinted status pills, a tracked-uppercase eyebrow. That's the most statistically common AI-generated look there is, which is the point; without a taste layer, that's what you get.
+One brief, two agents, one variable. Both were asked cold for a marketing frontpage for Driftwell, a fictional sleep-tracking app. The first agent was told to use no skills at all; the second read `SKILL.md` and nothing else. Neither page was edited afterward.
 
-| Without the skill | With the skill |
-|---|---|
-| ![Before](assets/before-without-skill.png) | ![After](assets/after-dashboard.png) |
+**Without the skill.** A deep-navy gradient with a CSS star field, a serif headline with one word italicized for emphasis, four accent colors, an uppercase tracked badge, a lavender pill, and a stat strip claiming 2.4M tracked nights and 4.9 stars from 120k reviews of an app that does not exist. Competently built, and recognizable as AI output from across the room.
 
-More cold builds on invented subjects, also unedited:
+![Without the skill](assets/before-landing.png)
 
-| | |
-|---|---|
-| ![Portfolio](assets/after-portfolio.png) | ![Modal](assets/after-modal.png) |
-| ![Controls](assets/after-controls.png) | ![Mobile](assets/after-dashboard-mobile.png) |
+**With the skill.** Warm bone ground, Geist, a glass nav, one ink pill, hairline cards, a single accent used only where it earns it. The one signature element is a hand-drawn hypnogram labeled as illustrative data, every number on the page is framed as a demo report rather than a claim, and the footer admits the product is fictional. Same model, same brief.
 
-One card across three themes with zero per-theme component CSS; only the token blocks change, and each theme's accent is paired to its own ground temperature:
-
-| Cream | Midnight | Obsidian |
-|---|---|---|
-| ![Cream](assets/after-theme-cream.png) | ![Midnight](assets/after-theme-midnight.png) | ![Obsidian](assets/after-theme-obsidian.png) |
+![With the skill](assets/after-landing.png)
 
 ## What the skill locks down
 
@@ -58,9 +49,9 @@ Some axes are taste; others are per-project freedom, and an agent guessing on th
 
 - **frontend-design**, Anthropic's official plugin from [anthropics/claude-code](https://github.com/anthropics/claude-code/tree/main/plugins/frontend-design), installable through the Claude Code plugin marketplace. Used for fresh visual direction on new surfaces.
 
-- **dataviz**, from Anthropic's public skills repo at [anthropics/skills](https://github.com/anthropics/skills). Required for any chart or dashboard tile.
+- **dataviz** ships built into Claude Code, so there's nothing to install; the skill routes chart and dashboard-tile work to it automatically.
 
-Credit where it's due: this skill stands on those. It contributes the part they can't, which is what one specific person keeps choosing.
+This skill wouldn't be possible without those. Emil's motion discipline, the Apple fluidity rules, and Hallmark's structural anti-slop gates are the expertise it builds on; all it adds is the personal layer they can't know. If you use it, go star [emilkowalski/skills](https://github.com/emilkowalski/skills) and [nutlope/hallmark](https://github.com/nutlope/hallmark). They earned it.
 
 ## Install
 
@@ -76,7 +67,7 @@ Or clone and copy. Reload skills (or restart Claude Code) and it auto-triggers o
 
 ## Samples
 
-The five demo files in [`samples/`](samples/) are actual cold-build outputs from testing, kept unedited and set on invented subjects: a pottery-studio booking dashboard, a dark portfolio section, a book-club settings modal, a brew-timer card with tooltips and a slider, and a four-theme hiking-log switcher. Each is a single self-contained HTML file; open it in a browser. The themes one persists your pick in localStorage and eases the switch only during the change, never on load.
+Both Driftwell pages live in [`samples/`](samples/) (`landing-no-skill.html` and `landing-with-skill.html`), alongside more cold-build outputs on invented subjects: a pottery-studio booking dashboard with its own no-skill baseline, a dark portfolio section, a book-club settings modal, a brew-timer card with tooltips and a slider, and a four-theme hiking-log switcher. Each is a single self-contained HTML file; open it in a browser. The themes one persists your pick in localStorage and eases the switch only during the change, never on load.
 
 ## How it got its rules
 
