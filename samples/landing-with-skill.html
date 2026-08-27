@@ -185,38 +185,50 @@
   .rise-3 { transition-delay: 140ms; }
   .rise-4 { transition-delay: 220ms; }
 
+  /* ---- Split row: prose one side, artifact the other ----
+     Text is always first in source order; .split-reverse flips the visual
+     side with `order` only, so the mobile stack reads text → artifact. */
+  .split {
+    display: grid;
+    grid-template-columns: 1fr 1.25fr;
+    align-items: center;
+    gap: clamp(32px, 4vw, 56px);
+  }
+  /* order flips the sides but not the track sizes — mirror them so the
+     artifact keeps the wider column in both directions. */
+  .split-reverse { grid-template-columns: 1.25fr 1fr; }
+  .split-reverse .split-media { order: -1; }
+  /* Grid items default to min-width:auto — without this a wide artifact
+     stretches its track instead of scrolling inside its own box. */
+  .split > * { min-width: 0; }
+  .split-text { max-width: 50ch; }
+
   /* ---- Hero ---- */
   .hero {
-    padding: 104px 0 40px;
-    text-align: center;
+    padding: 96px 0 40px;
   }
   .hero h1 {
-    font-size: clamp(2.5rem, 6vw, 3.7rem);
-    line-height: 1.06;
+    font-size: clamp(2.3rem, 4.4vw, 3.05rem);
+    line-height: 1.08;
     letter-spacing: -0.02em;
-    max-width: 14ch;
-    margin-inline: auto;
     text-wrap: balance;
   }
   .hero .sub {
-    margin: 22px auto 0;
-    max-width: 52ch;
+    margin: 20px 0 0;
+    max-width: 46ch;
     color: var(--text-2);
     font-size: 17.5px;
   }
   .hero-actions {
-    margin-top: 34px;
+    margin-top: 32px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 28px;
+    gap: 26px;
     flex-wrap: wrap;
   }
 
   /* ---- Signature: example-night hypnogram ---- */
   .hypno-card {
-    margin: 72px auto 0;
-    max-width: 860px;
     background: var(--surface);
     border: 1px solid var(--hairline);
     border-radius: 16px;
@@ -227,16 +239,19 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
+    gap: 12px;
+    flex-wrap: wrap;
     margin-bottom: 18px;
   }
   .hypno-head h2 { font-size: 16px; font-weight: 600; }
   .hypno-scroll { overflow-x: auto; }
-  .hypno-inner { min-width: 520px; }
+  .hypno-inner { min-width: 380px; }
   .hypno { width: 100%; height: auto; color: var(--ink); display: block; }
   .hypno .grid-line { stroke: currentColor; opacity: 0.1; stroke-width: 1; }
   .hypno .trace { stroke: currentColor; stroke-width: 2; fill: none; stroke-linejoin: round; stroke-linecap: round; }
-  .hypno text { fill: var(--text-3); font-size: 11px; font-weight: 500; }
+  /* SVG scales with the column, so labels are sized to land near 12px at
+     desktop width rather than at their literal px value. */
+  .hypno text { fill: var(--text-3); font-size: 16px; font-weight: 500; }
   .hypno-times {
     display: flex;
     justify-content: space-between;
@@ -305,7 +320,6 @@
 
   /* ---- Sample report strip ---- */
   .report {
-    margin-top: 36px;
     background: var(--surface);
     border: 1px solid var(--hairline);
     border-radius: 16px;
@@ -322,7 +336,7 @@
   .report-tiles {
     margin-top: 22px;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 14px;
   }
   .tile {
@@ -392,12 +406,15 @@
   }
 
   /* ---- Responsive ---- */
+  @media (max-width: 900px) {
+    .split { grid-template-columns: 1fr; gap: 36px; }
+    .split-reverse .split-media { order: 0; }
+    .split-text { max-width: none; }
+  }
   @media (max-width: 860px) {
     .features { grid-template-columns: 1fr; }
-    .report-tiles { grid-template-columns: repeat(2, 1fr); }
     .section { padding-top: 68px; }
     .hero { padding-top: 76px; }
-    .hypno-card { margin-top: 52px; }
   }
   @media (max-width: 620px) {
     .foot-cols { gap: 28px 44px; }
@@ -439,38 +456,42 @@
 
   <main>
     <section class="hero wrap">
-      <h1 class="rise rise-2">Your nights, drawn clearly</h1>
-      <p class="sub rise rise-3">Driftwell tracks your sleep from the nightstand — no wearable, no scores to chase — and turns each night into a morning report you can actually read.</p>
-      <div class="hero-actions rise rise-4">
-        <a class="btn" href="#get">Start tracking tonight <span class="arrow" aria-hidden="true">→</span></a>
-        <a class="link" href="#report">See a sample report</a>
-      </div>
+      <div class="split">
+        <div class="split-text">
+          <h1 class="rise rise-2">Your nights, drawn clearly</h1>
+          <p class="sub rise rise-3">Driftwell tracks your sleep from the nightstand — no wearable, no scores to chase — and turns each night into a morning report you can actually read.</p>
+          <div class="hero-actions rise rise-4">
+            <a class="btn" href="#get">Start tracking tonight <span class="arrow" aria-hidden="true">→</span></a>
+            <a class="link" href="#report">See a sample report</a>
+          </div>
+        </div>
 
-      <figure class="hypno-card rise rise-4">
-        <div class="hypno-head">
-          <h2>An example night, as Driftwell draws it</h2>
-          <span class="status-pill"><span class="dot" aria-hidden="true"></span>Report ready</span>
-        </div>
-        <div class="hypno-scroll">
-        <div class="hypno-inner">
-        <svg class="hypno" viewBox="0 0 680 160" role="img" aria-label="Illustrative sleep-stage chart for one demo night, stepping between awake, REM, light, and deep sleep from 11 pm to 7 am">
-          <line class="grid-line" x1="56" y1="20"  x2="680" y2="20"/>
-          <line class="grid-line" x1="56" y1="60"  x2="680" y2="60"/>
-          <line class="grid-line" x1="56" y1="100" x2="680" y2="100"/>
-          <line class="grid-line" x1="56" y1="140" x2="680" y2="140"/>
-          <text x="0" y="24">Awake</text>
-          <text x="0" y="64">REM</text>
-          <text x="0" y="104">Light</text>
-          <text x="0" y="144">Deep</text>
-          <path class="trace" d="M60,20 H84 V100 H140 V140 H200 V100 H240 V60 H285 V100 H330 V140 H395 V100 H435 V60 H495 V100 H525 V20 H535 V100 H570 V60 H645 V20 H680"/>
-        </svg>
-        <div class="hypno-times" aria-hidden="true">
-          <span>11 pm</span><span>1 am</span><span>3 am</span><span>5 am</span><span>7 am</span>
-        </div>
-        </div>
-        </div>
-        <figcaption class="hypno-note">Illustrative data — a hand-drawn demo night, not a measurement.</figcaption>
-      </figure>
+        <figure class="hypno-card split-media rise rise-4">
+          <div class="hypno-head">
+            <h2>An example night, as Driftwell draws it</h2>
+            <span class="status-pill"><span class="dot" aria-hidden="true"></span>Report ready</span>
+          </div>
+          <div class="hypno-scroll">
+            <div class="hypno-inner">
+              <svg class="hypno" viewBox="0 0 680 160" role="img" aria-label="Illustrative sleep-stage chart for one demo night, stepping between awake, REM, light, and deep sleep from 11 pm to 7 am">
+                <line class="grid-line" x1="56" y1="20"  x2="680" y2="20"/>
+                <line class="grid-line" x1="56" y1="60"  x2="680" y2="60"/>
+                <line class="grid-line" x1="56" y1="100" x2="680" y2="100"/>
+                <line class="grid-line" x1="56" y1="140" x2="680" y2="140"/>
+                <text x="0" y="24">Awake</text>
+                <text x="0" y="64">REM</text>
+                <text x="0" y="104">Light</text>
+                <text x="0" y="144">Deep</text>
+                <path class="trace" d="M60,20 H84 V100 H140 V140 H200 V100 H240 V60 H285 V100 H330 V140 H395 V100 H435 V60 H495 V100 H525 V20 H535 V100 H570 V60 H645 V20 H680"/>
+              </svg>
+              <div class="hypno-times" aria-hidden="true">
+                <span>11 pm</span><span>1 am</span><span>3 am</span><span>5 am</span><span>7 am</span>
+              </div>
+            </div>
+          </div>
+          <figcaption class="hypno-note">Illustrative data — a hand-drawn demo night, not a measurement.</figcaption>
+        </figure>
+      </div>
     </section>
 
     <section class="section wrap" id="features">
@@ -514,34 +535,40 @@
     </section>
 
     <section class="section wrap" id="report">
-      <div class="section-head">
-        <h2>What a morning report looks like</h2>
-        <p>Four numbers and a picture — enough to understand the night, short enough to read before coffee.</p>
-      </div>
-      <div class="report">
-        <div class="report-head">
-          <h3>Last night · demo data</h3>
-          <span class="status-pill"><span class="dot" aria-hidden="true"></span>Synced 7:02 am</span>
-        </div>
-        <div class="report-tiles">
-          <div class="tile">
-            <div class="num">7h 42m</div>
-            <div class="lbl">Time asleep</div>
-          </div>
-          <div class="tile">
-            <div class="num">1h 31m</div>
-            <div class="lbl">Deep sleep</div>
-          </div>
-          <div class="tile">
-            <div class="num">4</div>
-            <div class="lbl">Brief wakes</div>
-          </div>
-          <div class="tile">
-            <div class="num">11:24 pm</div>
-            <div class="lbl">Drifted off</div>
+      <div class="split split-reverse">
+        <div class="split-text">
+          <div class="section-head">
+            <h2>What a morning report looks like</h2>
+            <p>Four numbers and a picture — enough to understand the night, short enough to read before coffee.</p>
+            <p>No score, no streak, nothing to beat. The report says what happened last night and then stops talking.</p>
           </div>
         </div>
-        <p class="report-note">Sample report from a demo night. Driftwell shows your own numbers — it makes no claims about averages, improvements, or anyone else's sleep.</p>
+
+        <div class="report split-media">
+          <div class="report-head">
+            <h3>Last night · demo data</h3>
+            <span class="status-pill"><span class="dot" aria-hidden="true"></span>Synced 7:02 am</span>
+          </div>
+          <div class="report-tiles">
+            <div class="tile">
+              <div class="num">7h 42m</div>
+              <div class="lbl">Time asleep</div>
+            </div>
+            <div class="tile">
+              <div class="num">1h 31m</div>
+              <div class="lbl">Deep sleep</div>
+            </div>
+            <div class="tile">
+              <div class="num">4</div>
+              <div class="lbl">Brief wakes</div>
+            </div>
+            <div class="tile">
+              <div class="num">11:24 pm</div>
+              <div class="lbl">Drifted off</div>
+            </div>
+          </div>
+          <p class="report-note">Sample report from a demo night. Driftwell shows your own numbers — it makes no claims about averages, improvements, or anyone else's sleep.</p>
+        </div>
       </div>
     </section>
 

@@ -150,6 +150,25 @@ Theme pickers render as swatch buttons (ground + accent dot per swatch, the Them
 - **Checkboxes are drawn, not native** (screenshot-approved over the `accent-color`-tinted native widget). Structure: a clickable label wraps a **visually hidden native `<input type="checkbox">`** (`position: absolute; opacity: 0; width/height: 1px` — semantics and keyboard stay native) plus an `aria-hidden` drawn box and the text. The box: **18px, 5px radius**, hairline border, surface bg, `display: grid; place-items: center`, holding a ~10×8 stroked tick (path `M1 4.2 L3.6 6.8 L9 1.2`, stroke 1.6, round caps/joins) in the **ground color**. Checked (`input:checked + .box`): fill and border both go ink; the tick fades in and **scales 0.8 → 1** — every transition 140ms strong ease-out. `input:focus-visible + .box`: accent border + 3px soft focus ring. Single-line row labels sit muted (`text-2`) and lift to ink when checked; labels that carry a description line stay ink. Rows on a ~10px rhythm. Radios reuse the recipe with a full-round box, but keep the surface bg when checked — border goes ink and an **8px ink dot** scales in (`0.8 → 1`) instead of the tick; an ink dot needs the surface behind it, so radios never take the ink fill.
 - **Switches/steppers/segmented controls**: the moving indicator is a shared-layout slide (Framer `layoutId` or transform), 140–200ms strong ease-out, `accent-color`/fills from ink. Same reduced-motion collapse as everything else: state changes remain, travel goes.
 
+## Composition — pick the format per block
+
+Centering every block is the fastest way to look generated; so is flipping split rows on autopilot. Each block takes the format its own content has, and a page ends up carrying two or three formats, not one. Decide per block:
+
+| What the block holds | Format |
+|---|---|
+| One claim + one action, nothing to show yet | **Centered stack** — headline ≤ ~14ch, sub ≤ ~52ch, actions under it |
+| Prose *plus* a companion artifact (chart, screenshot, diagram, live control) | **Split row** — text one side, artifact the other, vertically centered |
+| A later block that is also prose + artifact | **Flip the sides** — text-left, then text-right, so the eye zig-zags instead of scanning one rail |
+| 3+ peers of equal weight (features, tiers, plans, logos) | **Left-aligned grid** under a left-aligned section head |
+| One artifact that *is* the section (a wide chart, a full report card) | **Full-width artifact**, heading and caption left-aligned around it |
+| Long-form reading | **One measure column**, left-aligned, 65–70ch |
+
+- **Centered type only survives short.** Past ~3 lines or ~60ch it reads worse than left-aligned at every width — a centered five-line paragraph is the tell. A hero and a closing CTA are the legitimately centered blocks; a centered *section* of body copy is not.
+- **Don't mix alignments inside one block.** A centered section head above a left-aligned grid is hierarchy and fine; centered cards whose own text is left-aligned is not.
+- **Split rows:** near-equal tracks (`1fr 1.1fr`, up to ~`1fr 1.3fr` when the artifact is wide — a 70/30 split is just a text block with a decoration beside it), gap 40–64px, text column capped at ~46–52ch, `align-items: center` (`start` once one column is under ~⅔ the other's height). The artifact keeps its own aspect ratio, never stretched to the text's height, and both children take `min-width: 0` so a wide artifact scrolls inside its own box instead of stretching its track.
+- **Splits collapse to one column** at ~860–900px, and **text comes first in source order** in every split whichever side it renders on; flip the visual side with `order`, so the mobile stack always reads text → artifact and the tab order never jumps. `order` moves the elements but not the track sizes — when the tracks are asymmetric, mirror them on the flipped row (`1fr 1.25fr` → `1.25fr 1fr`) or the artifact lands in the narrow column.
+- The hero's format anchors the page; repeat it only where a later block genuinely mirrors it.
+
 ## Spacing & alignment
 
 - Grouped rows: 8–11px rhythm; legend/heading to first item ≈ 8px. Ali notices a 4px miss in both directions — verify, don't eyeball.
@@ -181,5 +200,7 @@ Native `title` tooltips, native `<select>` dropdowns on polished surfaces (the o
 | Native `<select>` styled with a chevron overlay | The full combobox + listbox recipe: rotating chevron, 180ms scale-from-0.95 menu, one moving highlight, accent checkmark |
 | Native checkbox tinted with `accent-color` | The drawn 18px box: hidden native input, ink fill, tick scaling 0.8 → 1, accent focus ring |
 | Footer stripped to a single link row in the name of minimalism | Full footer: brand + one-liner, sentence-case link columns, hairline-topped © row |
+| Every block centered down the middle of the page | Pick per block: centered stack for a short claim, split row where an artifact accompanies the prose (flip sides on the next one), left-aligned grid for peers |
+| Centered paragraph running 5+ lines, or a split whose artifact is stretched to the text's height | Left-align anything past ~3 lines; let the artifact keep its own aspect and center the columns against each other |
 | "Looks done" without mobile shot | 375px screenshot first |
 | Assuming an open axis (e.g. Playfair on a portfolio, an accent hue, theme scope) | Ask the batch of open-axes questions first; if no user is reachable, take defaults and state them up front |
