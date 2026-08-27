@@ -24,7 +24,7 @@ One brief, two agents, one variable. Both were asked cold for a marketing frontp
 
 ## What the skill locks down
 
-The concrete stuff lives in [SKILL.md](SKILL.md); the short version is a warm OKLCH token system where every state derives via `color-mix`, a Geist-first type stack in sentence case, hairlines over shadows, two sanctioned chip patterns (colored outline for identity, neutral fill with a 6px semantic dot for status), custom tooltips because native `title` is banned, sliders that track the pointer 1:1, and an easing system built around `cubic-bezier(0.16, 1, 0.3, 1)` with reduced-motion handled everywhere. There's also a banned list of verbatim rejections. Standalone status dots. Saturated badge fills. A cool accent dropped raw onto a warm page. `transition: all`.
+The concrete stuff lives in [SKILL.md](SKILL.md); the short version is a warm OKLCH token system where every state derives via `color-mix`, a Geist-first type stack in sentence case, hairlines over shadows, two sanctioned chip patterns (colored outline for identity, neutral fill with a 6px semantic dot for status), custom tooltips because native `title` is banned, a custom combobox dropdown because a native select's open menu can't be styled, sliders that track the pointer 1:1, and an easing system built around `cubic-bezier(0.16, 1, 0.3, 1)` with reduced-motion handled everywhere. There's also a banned list of verbatim rejections. Standalone status dots. Saturated badge fills. A cool accent dropped raw onto a warm page. `transition: all`.
 
 ## What the skill asks about
 
@@ -67,11 +67,11 @@ Or clone and copy. Reload skills (or restart Claude Code) and it auto-triggers o
 
 ## Samples
 
-Both Driftwell pages live in [`samples/`](samples/) (`landing-no-skill.html` and `landing-with-skill.html`), alongside more cold-build outputs on invented subjects: a pottery-studio booking dashboard, a dark portfolio section, a book-club settings modal, a brew-timer card with tooltips and a slider, and a four-theme hiking-log switcher. Each is a single self-contained HTML file; open it in a browser. The themes one persists your pick in localStorage and eases the switch only during the change, never on load.
+Both Driftwell pages live in [`samples/`](samples/) (`landing-no-skill.html` and `landing-with-skill.html`), alongside more cold-build outputs on invented subjects: a pottery-studio booking dashboard, a book-club settings modal with the custom dropdown, a brew-timer card with tooltips and a slider, and a four-theme hiking-log switcher. Each is a single self-contained HTML file; open it in a browser. The themes one persists your pick in localStorage and eases the switch only during the change, never on load.
 
 ## How it got its rules
 
-Eight correction rounds so far, each one anchored to a real piece of feedback and verified by rerunning the same brief cold:
+Nine correction rounds so far, each one anchored to a real piece of feedback and verified by rerunning the same brief cold:
 
 | Round | Correction | Rule that came out of it |
 |---|---|---|
@@ -83,5 +83,6 @@ Eight correction rounds so far, each one anchored to a real piece of feedback an
 | 6 | Multi-theme sites should re-harmonize, not hardcode | Theming section with per-theme accents and eased switching |
 | 7 | "It shouldn't assume Playfair for the title" | Open axes: ask before assuming, declare defaults when you can't ask |
 | 8 | The floating nav should ease into a full bar on scroll; the footer had lost content the baseline kept | Scroll-responsive nav morph as the landing default; restraint cuts decoration, not navigation |
+| 9 | "The dropdown should be the exact same one" as an earlier project's, same motion and look | Custom combobox + listbox recipe (180ms scale-from-0.95 pop, rotating chevron, one moving highlight, accent checkmark); native `<select>` banned |
 
 The white-button round hides inside 6: on dark themes the primary pill is the ink token mixed 90 to 93 percent toward the ground, never pure `#fff`, because a stark white pill glows against a dark surface and reads as pasted-in.
