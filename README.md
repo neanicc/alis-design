@@ -67,7 +67,7 @@ Or clone and copy. Reload skills (or restart Claude Code) and it auto-triggers o
 
 ## Samples
 
-Both Driftwell pages live in [`samples/`](samples/) (`landing-no-skill.html` and `landing-with-skill.html`), alongside more cold-build outputs on invented subjects: a pottery-studio booking dashboard with its own no-skill baseline, a dark portfolio section, a book-club settings modal, a brew-timer card with tooltips and a slider, and a four-theme hiking-log switcher. Each is a single self-contained HTML file; open it in a browser. The themes one persists your pick in localStorage and eases the switch only during the change, never on load.
+Both Driftwell pages live in [`samples/`](samples/) (`landing-no-skill.html` and `landing-with-skill.html`), alongside more cold-build outputs on invented subjects: a pottery-studio booking dashboard, a dark portfolio section, a book-club settings modal, a brew-timer card with tooltips and a slider, and a four-theme hiking-log switcher. Each is a single self-contained HTML file; open it in a browser. The themes one persists your pick in localStorage and eases the switch only during the change, never on load.
 
 ## How it got its rules
 
