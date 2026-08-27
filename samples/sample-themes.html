@@ -3,147 +3,241 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Project overview</title>
+<title>Switchback — trip overview</title>
+
+<script>
+  /* Apply saved theme before first paint — no transition on load. */
+  (function () {
+    var THEMES = ["cream", "frost", "midnight", "obsidian"];
+    try {
+      var saved = localStorage.getItem("switchback:theme");
+      if (saved && THEMES.indexOf(saved) > -1) {
+        if (saved !== "cream") document.documentElement.dataset.theme = saved;
+      } else if (matchMedia("(prefers-color-scheme: dark)").matches) {
+        /* Honor system preference only when the user hasn't picked. */
+        document.documentElement.dataset.theme = "obsidian";
+      }
+    } catch (_) {}
+  })();
+</script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
+
 <style>
-  /* ---- Token blocks: the ONLY place themes differ ---------------------- */
-  :root { /* cream (default) — warm light */
+  /* ---- Tokens ------------------------------------------------------ */
+  :root {
+    /* Theme definitions — single source of truth; the picker swatches
+       reference these too, so no hex is ever written twice. */
+    --t-cream-ground: #f7f6f3;    --t-cream-surface: #fffdfb;
+    --t-cream-ink: oklch(19% 0.008 80);   --t-cream-accent: #b44b3d;
+
+    --t-frost-ground: #fafbfc;    --t-frost-surface: #ffffff;
+    --t-frost-ink: oklch(21% 0.01 250);   --t-frost-accent: #0ea5e9;
+
+    --t-midnight-ground: #0a0a0f; --t-midnight-surface: #15151c;
+    --t-midnight-ink: #f2f2f4;            --t-midnight-accent: #8b5cf6;
+
+    --t-obsidian-ground: #1a1612; --t-obsidian-surface: #25201b;
+    --t-obsidian-ink: #f0ebe4;            --t-obsidian-accent: #f59e0b;
+
+    /* Active theme: cream (default) — warm on warm. */
+    --ground: var(--t-cream-ground);
+    --surface: var(--t-cream-surface);
+    --ink: var(--t-cream-ink);
+    --accent: var(--t-cream-accent);
     color-scheme: light;
-    --ground: #f7f6f3;
-    --surface: #fffdfb;
-    --ink: oklch(19% 0.008 80);
-    --accent: #b44b3d;            /* editorial red: warm on warm */
-    --ok: oklch(52% 0.10 155);    /* toned semantic green */
-    --hairline-a: 12%;
-    --pill-mix: 6%;
-    --cta-mix: 100%;              /* light: black pill = pure ink fill */
 
-    /* Derived tokens — identical for every theme, re-harmonize automatically */
+    /* Semantic: same hue every theme, lightness adapts per ground. */
+    --success-l: 48%;
+    --success: oklch(var(--success-l) 0.10 130);
+
+    /* Alphas are tokens too — dark grounds need more. */
+    --hairline-alpha: 12%;
+
+    /* Primary action: ink pill on light grounds. */
+    --cta-fill: var(--ink);
+
+    /* Derived states — re-harmonize automatically on theme change. */
     --text-2: color-mix(in oklab, var(--ink) 62%, var(--ground));
-    --text-3: color-mix(in oklab, var(--ink) 45%, var(--ground));
-    --hairline: color-mix(in oklab, var(--ink) var(--hairline-a), transparent);
-    --pill-fill: color-mix(in oklab, var(--ink) var(--pill-mix), var(--surface));
-    --cta-fill: color-mix(in oklab, var(--ink) var(--cta-mix), var(--ground));
-    --cta-hover: color-mix(in oklab, var(--cta-fill) 88%, var(--ground));
-    --cta-label: var(--ground);
-    --swatch-ring: color-mix(in oklab, var(--ink) 65%, var(--ground));
-  }
-  :root[data-theme="frost"] { /* cool light */
-    --ground: #fafbfc;
-    --surface: #ffffff;
-    --ink: oklch(20% 0.008 250);
-    --accent: #0ea5e9;            /* sky: cool on cool */
-  }
-  :root[data-theme="midnight"] { /* cool dark */
-    color-scheme: dark;
-    --ground: #0a0a0f;
-    --surface: #15151c;
-    --ink: #f2f2f4;
-    --accent: #8b5cf6;            /* violet: cool on cool dark */
-    --ok: oklch(62% 0.10 155);    /* semantic hue kept, lightness lifted for dark ground */
-    --hairline-a: 14%;            /* dark themes need higher alphas */
-    --pill-mix: 9%;
-    --cta-mix: 92%;               /* soft paper pill: ink eased toward ground, never pure #fff */
-  }
-  :root[data-theme="obsidian"] { /* warm dark */
-    color-scheme: dark;
-    --ground: #1a1612;
-    --surface: #25201b;
-    --ink: #f0ebe4;
-    --accent: #f59e0b;            /* amber: warm on warm dark */
-    --ok: oklch(62% 0.10 155);
-    --hairline-a: 14%;
-    --pill-mix: 9%;
-    --cta-mix: 92%;
+    --text-3: color-mix(in oklab, var(--ink) 38%, var(--ground));
+    --hairline: color-mix(in oklab, var(--ink) var(--hairline-alpha), transparent);
+    --pill-fill: color-mix(in oklab, var(--ink) 6%, var(--surface));
+    --cta-hover: color-mix(in oklab, var(--cta-fill) 90%, var(--ground));
+    --ring: color-mix(in oklab, var(--ink) 55%, var(--ground));
   }
 
-  /* ---- Theme switch: eased, armed only during the change --------------- */
+  :root[data-theme="frost"] {      /* cool on cool light */
+    --ground: var(--t-frost-ground);
+    --surface: var(--t-frost-surface);
+    --ink: var(--t-frost-ink);
+    --accent: var(--t-frost-accent);
+  }
+
+  :root[data-theme="midnight"] {   /* cool on cool dark */
+    --ground: var(--t-midnight-ground);
+    --surface: var(--t-midnight-surface);
+    --ink: var(--t-midnight-ink);
+    --accent: var(--t-midnight-accent);
+    color-scheme: dark;
+    --success-l: 60%;
+    --hairline-alpha: 14%;
+    /* Soft paper pill: warm ink eased toward the ground — never pure #fff. */
+    --cta-fill: color-mix(in oklab, var(--ink) 92%, var(--ground));
+  }
+
+  :root[data-theme="obsidian"] {   /* warm on warm dark */
+    --ground: var(--t-obsidian-ground);
+    --surface: var(--t-obsidian-surface);
+    --ink: var(--t-obsidian-ink);
+    --accent: var(--t-obsidian-accent);
+    color-scheme: dark;
+    --success-l: 60%;
+    --hairline-alpha: 14%;
+    --cta-fill: color-mix(in oklab, var(--ink) 92%, var(--ground));
+  }
+
+  /* ---- Theme switch: eased, armed only during the change ----------- */
   :root.theming, :root.theming * {
     transition: background-color 300ms ease, color 300ms ease,
       border-color 300ms ease, fill 300ms ease, box-shadow 300ms ease;
   }
+  ::view-transition-old(root), ::view-transition-new(root) {
+    animation-duration: 300ms;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :root.theming, :root.theming * { transition: none; }
+    ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+  }
 
-  /* ---- Base ------------------------------------------------------------ */
-  * { box-sizing: border-box; margin: 0; }
-  html, body { min-height: 100%; }
+  /* ---- Base -------------------------------------------------------- */
+  *, *::before, *::after { box-sizing: border-box; }
+
   body {
+    margin: 0;
+    min-height: 100svh;
+    display: grid;
+    place-items: center;
+    padding: 48px 20px;
     background: var(--ground);
     color: var(--ink);
     font-family: "Geist", -apple-system, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
-    font-size: 14px;
+    font-size: 15px;
     line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .wrap {
+    width: min(420px, 100%);
     display: grid;
-    place-items: center;
-    padding: 24px;
-  }
-  button { font: inherit; cursor: pointer; }
-  button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-
-  .page { width: 100%; max-width: 540px; }
-
-  /* ---- Header + theme picker ------------------------------------------ */
-  .page-head {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 16px 20px;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
-  }
-  h1 { font-size: 20px; font-weight: 600; letter-spacing: -0.01em; }
-  .page-sub { color: var(--text-2); margin-top: 3px; }
-
-  .picker { display: flex; align-items: center; gap: 8px; }
-  .picker-label { font-size: 12px; color: var(--text-2); margin-right: 2px; }
-  .swatch {
-    width: 26px; height: 26px;
-    border-radius: 999px;
-    background: var(--sw-ground);
-    border: 1px solid var(--hairline);
-    display: grid; place-items: center;
-    padding: 0;
-  }
-  .swatch::after {
-    content: "";
-    width: 8px; height: 8px;
-    border-radius: 999px;
-    background: var(--sw-accent);
-  }
-  .swatch[aria-pressed="true"] {
-    box-shadow: 0 0 0 2px var(--ground), 0 0 0 4px var(--swatch-ring);
-  }
-
-  /* ---- Card: zero per-theme CSS — everything below is token-fed ------- */
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--hairline);
-    border-radius: 16px;
-    padding: 22px;
-    transition: opacity 420ms cubic-bezier(0.16, 1, 0.3, 1),
-      transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+    gap: 18px;
+    transition: opacity 450ms cubic-bezier(0.16, 1, 0.3, 1),
+      transform 450ms cubic-bezier(0.16, 1, 0.3, 1);
   }
   @starting-style {
-    .card { opacity: 0; transform: translateY(8px); }
+    .wrap { opacity: 0; transform: translateY(8px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .wrap { transition: none; }
   }
 
-  .card-top {
+  /* ---- Masthead + theme picker ------------------------------------- */
+  .masthead {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
   }
-  .card-title { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
-  .card-desc { color: var(--text-2); margin-top: 5px; }
-  .card-meta { color: var(--text-3); font-size: 12.5px; margin-top: 9px; }
+  .wordmark {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
 
-  .status {
+  .picker {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .picker-label {
+    font-size: 12px;
+    color: var(--text-3);
+    margin-right: 2px;
+  }
+  .swatch {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border-radius: 999px;
+    border: 1px solid var(--hairline);
+    background: var(--sw-g);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: transform 140ms cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 150ms ease;
+  }
+  .swatch::after {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--sw-a);
+  }
+  .swatch:active { transform: scale(0.97); }
+  .swatch[aria-pressed="true"] {
+    box-shadow: 0 0 0 2px var(--ground), 0 0 0 3.5px var(--ring);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .swatch { transition: none; }
+  }
+
+  /* ---- Card -------------------------------------------------------- */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: 16px;
+    padding: 24px;
+  }
+
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .trip-title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+  }
+  .trip-desc {
+    margin: 8px 0 0;
+    font-size: 14px;
+    color: var(--text-2);
+  }
+  .trip-meta {
+    margin: 10px 0 0;
+    font-size: 13px;
+    color: var(--text-3);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .status-pill {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 7px;
     height: 20px;
     padding: 0 11px;
+    margin-top: 3px;
     border-radius: 999px;
     background: var(--pill-fill);
     color: var(--ink);
@@ -151,153 +245,168 @@
     font-weight: 500;
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
+    flex: none;
   }
-  .status-dot {
-    width: 6px; height: 6px;
+  .status-pill .dot {
+    width: 6px;
+    height: 6px;
     border-radius: 999px;
-    background: var(--ok);
+    background: var(--success);
   }
 
-  .card-divider { border: 0; border-top: 1px solid var(--hairline); margin: 18px 0; }
-
-  .card-foot {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px 24px;
-    flex-wrap: wrap;
+  .stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--hairline);
   }
-  .stats { display: flex; gap: 28px; }
-  .stat-num {
-    font-size: 16px;
+  .stat + .stat {
+    border-left: 1px solid var(--hairline);
+    padding-left: 16px;
+  }
+  .stat-value {
+    font-size: 18px;
     font-weight: 600;
     letter-spacing: -0.01em;
     font-variant-numeric: tabular-nums;
   }
-  .stat-lbl { font-size: 12px; color: var(--text-2); margin-top: 2px; }
+  .stat-label {
+    margin-top: 2px;
+    font-size: 12px;
+    color: var(--text-2);
+  }
 
   .cta {
+    margin-top: 18px;
+    width: 100%;
     display: inline-flex;
     align-items: center;
-    gap: 7px;
-    background: var(--cta-fill);
-    color: var(--cta-label);
+    justify-content: center;
+    gap: 8px;
+    padding: 11px 20px;
     border: 0;
     border-radius: 999px;
-    padding: 9px 16px;
-    font-size: 13px;
+    background: var(--cta-fill);
+    color: var(--ground);
+    font: inherit;
+    font-size: 14px;
     font-weight: 500;
-    line-height: 1;
-    transition: background-color 140ms cubic-bezier(0.16, 1, 0.3, 1),
-      transform 140ms cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: pointer;
+    transition: transform 140ms cubic-bezier(0.16, 1, 0.3, 1),
+      background-color 140ms ease;
   }
   .cta:active { transform: scale(0.97); }
-  .cta-arrow { display: inline-block; transition: transform 150ms cubic-bezier(0.16, 1, 0.3, 1); }
+  .cta-arrow {
+    display: inline-block;
+    transition: transform 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
   @media (hover: hover) and (pointer: fine) {
     .cta:hover { background: var(--cta-hover); }
     .cta:hover .cta-arrow { transform: translateX(2px); }
   }
-
-  /* ---- Reduced motion: instant, always --------------------------------- */
   @media (prefers-reduced-motion: reduce) {
-    :root.theming, :root.theming * { transition: none; }
-    .card, .cta, .cta-arrow { transition: none; }
+    .cta, .cta-arrow { transition: none; }
+  }
+
+  .foot {
+    font-size: 12px;
+    color: var(--text-3);
+    text-align: center;
   }
 </style>
-<script>
-  /* Apply the saved theme before first paint — no transition on load. */
-  (function () {
-    try {
-      var saved = localStorage.getItem("atlas:theme");
-      if (saved && saved !== "cream") {
-        document.documentElement.dataset.theme = saved;
-      } else if (!saved && matchMedia("(prefers-color-scheme: dark)").matches) {
-        document.documentElement.dataset.theme = "midnight";
-      }
-    } catch (e) {}
-  })();
-</script>
 </head>
 <body>
-  <main class="page">
-    <div class="page-head">
-      <div>
-        <h1>Project overview</h1>
-        <p class="page-sub">One card, four grounds, zero per-theme component CSS.</p>
+
+<div class="wrap">
+  <header class="masthead">
+    <div class="wordmark">Switchback</div>
+    <div class="picker" role="group" aria-label="Theme">
+      <span class="picker-label" id="picker-label">Theme</span>
+      <button class="swatch" type="button" data-theme-name="cream"
+        style="--sw-g: var(--t-cream-ground); --sw-a: var(--t-cream-accent)"
+        aria-label="Cream theme" aria-pressed="true"></button>
+      <button class="swatch" type="button" data-theme-name="frost"
+        style="--sw-g: var(--t-frost-ground); --sw-a: var(--t-frost-accent)"
+        aria-label="Frost theme" aria-pressed="false"></button>
+      <button class="swatch" type="button" data-theme-name="midnight"
+        style="--sw-g: var(--t-midnight-ground); --sw-a: var(--t-midnight-accent)"
+        aria-label="Midnight theme" aria-pressed="false"></button>
+      <button class="swatch" type="button" data-theme-name="obsidian"
+        style="--sw-g: var(--t-obsidian-ground); --sw-a: var(--t-obsidian-accent)"
+        aria-label="Obsidian theme" aria-pressed="false"></button>
+    </div>
+  </header>
+
+  <main class="card">
+    <div class="card-top">
+      <h1 class="trip-title">Ridgeline loop</h1>
+      <span class="status-pill"><span class="dot" aria-hidden="true"></span>On schedule</span>
+    </div>
+    <p class="trip-desc">A clockwise circuit over the north saddle, back along the creek trail before dusk.</p>
+    <p class="trip-meta">Sawtooth range · Saturday 6:40 am · 4 hikers</p>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-value">14.2 km</div>
+        <div class="stat-label">Distance</div>
       </div>
-      <div class="picker" role="group" aria-label="Theme">
-        <span class="picker-label" aria-hidden="true">Theme</span>
-        <button class="swatch" data-theme="cream" aria-label="Cream theme" aria-pressed="true"
-          style="--sw-ground:#f7f6f3; --sw-accent:#b44b3d"></button>
-        <button class="swatch" data-theme="frost" aria-label="Frost theme" aria-pressed="false"
-          style="--sw-ground:#fafbfc; --sw-accent:#0ea5e9"></button>
-        <button class="swatch" data-theme="midnight" aria-label="Midnight theme" aria-pressed="false"
-          style="--sw-ground:#0a0a0f; --sw-accent:#8b5cf6"></button>
-        <button class="swatch" data-theme="obsidian" aria-label="Obsidian theme" aria-pressed="false"
-          style="--sw-ground:#1a1612; --sw-accent:#f59e0b"></button>
+      <div class="stat">
+        <div class="stat-value">610 m</div>
+        <div class="stat-label">Elevation</div>
       </div>
     </div>
 
-    <section class="card" aria-labelledby="project-title">
-      <div class="card-top">
-        <h2 class="card-title" id="project-title">Atlas relaunch</h2>
-        <span class="status"><span class="status-dot" aria-hidden="true"></span>On track</span>
-      </div>
-      <p class="card-desc">Rebuilding the marketing site and docs on the new design system.</p>
-      <p class="card-meta">Updated 2 hours ago &middot; 4 teammates</p>
-      <hr class="card-divider">
-      <div class="card-foot">
-        <div class="stats">
-          <div class="stat">
-            <div class="stat-num">24</div>
-            <div class="stat-lbl">Tasks closed</div>
-          </div>
-          <div class="stat">
-            <div class="stat-num">Sep 12</div>
-            <div class="stat-lbl">Next milestone</div>
-          </div>
-        </div>
-        <button class="cta" type="button">Open project <span class="cta-arrow" aria-hidden="true">&rarr;</span></button>
-      </div>
-    </section>
+    <button class="cta" type="button">Open trip log <span class="cta-arrow" aria-hidden="true">→</span></button>
   </main>
 
-  <script>
-    (function () {
-      var root = document.documentElement;
-      var KEY = "atlas:theme";
-      var reduced = matchMedia("(prefers-reduced-motion: reduce)");
-      var swatches = document.querySelectorAll(".swatch");
-      var timer;
+  <p class="foot">Demo page for a fictional hiking log — every trip, time, and name is invented.</p>
+</div>
 
-      function apply(name) {
-        if (name === "cream") root.removeAttribute("data-theme");
-        else root.dataset.theme = name;
-        swatches.forEach(function (b) {
-          b.setAttribute("aria-pressed", String(b.dataset.theme === name));
-        });
-      }
+<script>
+  (function () {
+    var KEY = "switchback:theme";
+    var root = document.documentElement;
+    var swatches = Array.prototype.slice.call(document.querySelectorAll(".swatch"));
+    var themingTimer;
 
-      function setTheme(name) {
-        try { localStorage.setItem(KEY, name); } catch (e) {}
-        if (reduced.matches) { apply(name); return; }        /* instant under reduced motion */
-        if (document.startViewTransition) {                   /* prefer a View Transitions cross-fade */
-          document.startViewTransition(function () { apply(name); });
-          return;
-        }
-        root.classList.add("theming");                        /* arm transitions for the switch only */
-        apply(name);
-        clearTimeout(timer);
-        timer = setTimeout(function () { root.classList.remove("theming"); }, 350);
-      }
-
+    function applyTheme(name) {
+      if (name === "cream") root.removeAttribute("data-theme");
+      else root.dataset.theme = name;
       swatches.forEach(function (b) {
-        b.addEventListener("click", function () { setTheme(b.dataset.theme); });
+        b.setAttribute("aria-pressed", String(b.dataset.themeName === name));
       });
+    }
 
-      /* Sync pressed state with whatever the pre-paint boot applied. */
-      apply(root.dataset.theme || "cream");
-    })();
-  </script>
+    function setTheme(name) {
+      var commit = function () {
+        applyTheme(name);
+        try { localStorage.setItem(KEY, name); } catch (_) {}
+      };
+      if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        commit();                                   /* instant */
+        return;
+      }
+      if (document.startViewTransition) {
+        document.startViewTransition(commit);       /* cross-fade */
+        return;
+      }
+      root.classList.add("theming");                /* arm for the switch only */
+      commit();
+      clearTimeout(themingTimer);
+      themingTimer = setTimeout(function () {
+        root.classList.remove("theming");
+      }, 350);
+    }
+
+    /* Sync the pressed swatch with whatever the pre-paint script applied. */
+    applyTheme(root.dataset.theme || "cream");
+
+    swatches.forEach(function (b) {
+      b.addEventListener("click", function () { setTheme(b.dataset.themeName); });
+    });
+  })();
+</script>
+
 </body>
 </html>

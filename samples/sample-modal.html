@@ -3,22 +3,32 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Workspace settings</title>
+<title>Club settings — Chapterly</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+  /* ---------- Tokens (single source of color truth) ---------- */
   :root {
     --ground: oklch(98% 0.004 85);
     --surface: #fffdfb;
     --ink: oklch(19% 0.008 80);
-    --text-2: oklch(50% 0.01 80);
-    --text-3: oklch(68% 0.01 80);
-    --hairline: color-mix(in oklab, var(--ink) 12%, transparent);
-    --hairline-soft: color-mix(in oklab, var(--ink) 8%, transparent);
-    --accent: #4f46e5;
-    --danger: oklch(55% 0.16 30);
-    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --accent: #b44b3d; /* editorial red — warm on warm */
+    --error: oklch(55% 0.16 30);
+    --status-success: #4a6b28;
+
+    --text-2: color-mix(in oklab, var(--ink) 62%, var(--ground));
+    --text-3: color-mix(in oklab, var(--ink) 42%, var(--ground));
+    --hairline: color-mix(in oklab, var(--ink) 11%, transparent);
+    --hairline-strong: color-mix(in oklab, var(--ink) 16%, transparent);
+    --scrim: color-mix(in oklab, var(--ink) 44%, transparent);
+    --shadow-sm: color-mix(in oklab, var(--ink) 8%, transparent);
+    --shadow-lg: color-mix(in oklab, var(--ink) 11%, transparent);
+    --focus-ring: color-mix(in oklab, var(--accent) 24%, transparent);
+    --error-ring: color-mix(in oklab, var(--error) 22%, transparent);
+    --pill-fill: color-mix(in oklab, var(--ink) 6%, var(--surface));
+
+    --ease-out-strong: cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -29,68 +39,125 @@
     font-family: "Geist", -apple-system, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
     font-size: 14px;
     line-height: 1.5;
-    color: var(--ink);
     background: var(--ground);
-    -webkit-font-smoothing: antialiased;
+    color: var(--ink);
+    overflow: hidden; /* modal is open */
   }
 
-  /* ---------- Page behind the modal ---------- */
-
-  .page-nav {
+  /* ---------- Background page (dimmed) ---------- */
+  .app-header {
     display: flex;
     align-items: center;
-    gap: 20px;
-    padding: 14px 32px;
+    gap: 28px;
+    padding: 14px 24px;
     background: var(--surface);
-    border-bottom: 1px solid var(--hairline-soft);
+    border-bottom: 1px solid var(--hairline);
   }
-
-  .page-nav .brand { font-weight: 600; letter-spacing: -0.01em; }
-
-  .page-nav a {
+  .wordmark {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .app-nav { display: flex; gap: 20px; }
+  .app-nav a {
     color: var(--text-2);
     text-decoration: none;
-    font-size: 13.5px;
+    font-size: 13px;
+  }
+  .app-header .me {
+    margin-left: auto;
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    background: var(--pill-fill);
+    border: 1px solid var(--hairline);
+    display: grid;
+    place-items: center;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-2);
   }
 
-  .page-body {
+  .page {
     max-width: 720px;
     margin: 0 auto;
-    padding: 48px 24px;
+    padding: 40px 24px;
   }
-
-  .page-body h1 {
+  .page h1 {
     font-size: 22px;
     font-weight: 600;
     letter-spacing: -0.015em;
-    margin-bottom: 12px;
   }
-
-  .page-body p {
+  .page .meta {
+    margin-top: 4px;
+    font-size: 13px;
     color: var(--text-2);
-    max-width: 56ch;
-    margin-bottom: 10px;
   }
 
-  /* ---------- Overlay ---------- */
+  .card {
+    margin-top: 24px;
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: 14px;
+    padding: 18px 20px;
+  }
+  .card .card-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-2);
+  }
+  .card .book {
+    margin-top: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .card .when {
+    margin-top: 2px;
+    font-size: 13px;
+    color: var(--text-2);
+  }
 
-  .overlay {
+  /* Status pill: soft neutral fill, ink text, 6px semantic dot carries the only color */
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 20px;
+    padding: 0 11px;
+    border-radius: 999px;
+    background: var(--pill-fill);
+    color: var(--ink);
+    font-size: 11px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .status-pill .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--status-success);
+  }
+
+  /* ---------- Scrim + dialog layer ---------- */
+  .scrim {
+    position: fixed;
+    inset: 0;
+    background: var(--scrim);
+    opacity: 1;
+    transition: opacity 300ms var(--ease-out-strong);
+  }
+  .dialog-layer {
     position: fixed;
     inset: 0;
     display: grid;
     place-items: center;
     padding: 16px;
-    background: color-mix(in oklab, var(--ink) 38%, transparent);
-    backdrop-filter: blur(2px);
-    opacity: 1;
-    transition: opacity 300ms var(--ease-out);
   }
-
-  @starting-style {
-    .overlay { opacity: 0; }
-  }
-
-  /* ---------- Modal ---------- */
 
   .modal {
     width: min(440px, 100%);
@@ -98,299 +165,285 @@
     border: 1px solid var(--hairline);
     border-radius: 16px;
     padding: 24px;
-    box-shadow:
-      0 1px 2px color-mix(in oklab, var(--ink) 6%, transparent),
-      0 16px 32px color-mix(in oklab, var(--ink) 10%, transparent);
+    box-shadow: 0 1px 2px var(--shadow-sm), 0 16px 32px var(--shadow-lg);
     opacity: 1;
     transform: translateY(0);
-    transition: opacity 380ms var(--ease-out), transform 380ms var(--ease-out);
+    transition: opacity 320ms var(--ease-out-strong), transform 320ms var(--ease-out-strong);
+    max-height: calc(100dvh - 32px);
+    overflow-y: auto;
   }
 
+  /* Entrance: once per mount — fade + 8px rise */
   @starting-style {
     .modal { opacity: 0; transform: translateY(8px); }
+    .scrim { opacity: 0; }
   }
 
   .modal-header { margin-bottom: 20px; }
-
-  .modal-header h2 {
+  .modal-title {
     font-size: 17px;
     font-weight: 600;
     letter-spacing: -0.01em;
   }
-
-  .modal-header p {
-    font-size: 13.5px;
+  .modal-sub {
+    margin-top: 3px;
+    font-size: 13px;
     color: var(--text-2);
-    margin-top: 4px;
   }
 
   /* ---------- Fields ---------- */
-
-  .field { margin-bottom: 18px; }
-
-  .field-label {
+  .field { margin-bottom: 16px; }
+  .field label {
     display: block;
     font-size: 13px;
     font-weight: 500;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
   }
 
-  .text-input,
-  .select-input {
+  .control {
     width: 100%;
-    height: 38px;
-    padding: 0 12px;
     font: inherit;
-    font-size: 14px;
     color: var(--ink);
     background: var(--surface);
-    border: 1px solid var(--hairline);
+    border: 1px solid var(--hairline-strong);
     border-radius: 12px;
-    transition: border-color 160ms var(--ease-out), box-shadow 160ms var(--ease-out);
+    padding: 9px 12px;
+    transition: border-color 140ms ease, box-shadow 140ms ease;
   }
-
-  .text-input:focus-visible,
-  .select-input:focus-visible {
+  .control::placeholder { color: var(--text-3); }
+  .control:focus-visible {
     outline: none;
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 18%, transparent);
-  }
-
-  .select-input {
-    appearance: none;
-    padding-right: 34px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5 6 8l3.5-3.5' fill='none' stroke='%2328261f' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 12px center;
+    box-shadow: 0 0 0 3px var(--focus-ring);
   }
 
   /* Error state */
-
-  .field-error .text-input {
-    border-color: var(--danger);
+  .field.has-error .control { border-color: var(--error); }
+  .field.has-error .control:focus-visible {
+    border-color: var(--error);
+    box-shadow: 0 0 0 3px var(--error-ring);
   }
-
-  .field-error .text-input:focus-visible {
-    border-color: var(--danger);
-    box-shadow: 0 0 0 3px color-mix(in oklab, var(--danger) 15%, transparent);
-  }
-
-  .helper-error {
-    display: block;
+  .field-error {
     margin-top: 6px;
-    font-size: 13px;
-    color: var(--danger);
+    font-size: 12px;
+    color: var(--error);
+  }
+
+  /* Select with drawn chevron (no images, token-colored) */
+  .select-wrap { position: relative; }
+  .select-wrap select {
+    appearance: none;
+    -webkit-appearance: none;
+    padding-right: 36px;
+    cursor: pointer;
+  }
+  .select-wrap::after {
+    content: "";
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    width: 7px;
+    height: 7px;
+    border-right: 1.5px solid var(--text-2);
+    border-bottom: 1.5px solid var(--text-2);
+    transform: translateY(-70%) rotate(45deg);
+    pointer-events: none;
   }
 
   /* ---------- Checkbox group ---------- */
-
-  .check-group { border: 0; margin-bottom: 4px; }
-
-  .check-group legend {
+  .group { border: 0; margin: 20px 0 0; }
+  .group legend {
     font-size: 13px;
     font-weight: 500;
-    margin-bottom: 8px;
+    margin-bottom: 8px; /* legend → first item ≈ 8px */
+    padding: 0;
   }
-
   .check-row {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 10px;
-    font-size: 14px;
+    padding: 5px 0; /* rows land on a 10px rhythm */
     cursor: pointer;
   }
-
-  .check-row + .check-row { margin-top: 10px; }
-
   .check-row input[type="checkbox"] {
     width: 16px;
     height: 16px;
-    margin: 0;
+    margin-top: 2px; /* optical align with first text line */
     accent-color: var(--ink);
+    flex: none;
     cursor: pointer;
   }
-
   .check-row input[type="checkbox"]:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
+    outline: none;
+    box-shadow: 0 0 0 3px var(--focus-ring);
     border-radius: 4px;
   }
-
-  .check-hint {
-    font-size: 13px;
-    color: var(--text-3);
+  .check-row .check-label { font-size: 14px; }
+  .check-row .check-desc {
+    font-size: 12px;
+    color: var(--text-2);
+    margin-top: 1px;
   }
 
-  /* ---------- Danger zone ---------- */
-
-  .danger-row {
+  /* ---------- Actions ---------- */
+  .modal-footer {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    margin-top: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 22px;
     padding-top: 16px;
-    border-top: 1px solid var(--hairline-soft);
+    border-top: 1px solid var(--hairline);
   }
-
-  .danger-copy .danger-title {
-    font-size: 13.5px;
-    font-weight: 500;
-  }
-
-  .danger-copy .danger-sub {
-    font-size: 13px;
-    color: var(--text-3);
-  }
-
-  /* ---------- Buttons ---------- */
 
   .btn {
     font: inherit;
-    font-size: 13.5px;
     font-weight: 500;
-    height: 36px;
-    padding: 0 16px;
     border-radius: 999px;
+    padding: 9px 18px;
+    border: 1px solid transparent;
     cursor: pointer;
-    transition: background-color 160ms var(--ease-out), border-color 160ms var(--ease-out),
-      color 160ms var(--ease-out), transform 140ms var(--ease-out);
+    transition: transform 140ms var(--ease-out-strong),
+      background-color 140ms ease, border-color 140ms ease;
   }
-
   .btn:active { transform: scale(0.97); }
-
   .btn:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
+    outline: none;
+    box-shadow: 0 0 0 3px var(--focus-ring);
   }
 
+  /* One weighted action: the ink pill */
   .btn-primary {
     background: var(--ink);
-    color: var(--surface);
-    border: 1px solid var(--ink);
+    color: var(--ground);
   }
 
   .btn-ghost {
     background: transparent;
+    border-color: var(--hairline-strong);
     color: var(--ink);
-    border: 1px solid var(--hairline);
   }
 
-  .btn-danger {
+  /* Quiet destructive: toned text, no fill, no border */
+  .btn-danger-quiet {
     background: transparent;
-    color: var(--danger);
-    border: 1px solid color-mix(in oklab, var(--danger) 30%, transparent);
-    height: 32px;
-    padding: 0 14px;
-    font-size: 13px;
+    color: var(--error);
+    padding: 9px 12px;
+    margin-left: -12px; /* optical left alignment with modal content */
+    margin-right: auto;
+  }
+  .btn-danger-quiet:focus-visible {
+    box-shadow: 0 0 0 3px var(--error-ring);
   }
 
   @media (hover: hover) and (pointer: fine) {
-    .btn-primary:hover { background: color-mix(in oklab, var(--ink) 86%, white); border-color: color-mix(in oklab, var(--ink) 86%, white); }
-    .btn-ghost:hover { background: color-mix(in oklab, var(--ink) 5%, transparent); }
-    .btn-danger:hover {
-      background: color-mix(in oklab, var(--danger) 8%, transparent);
-      border-color: color-mix(in oklab, var(--danger) 50%, transparent);
-    }
+    .app-nav a:hover { color: var(--ink); }
+    .btn-primary:hover { background: color-mix(in oklab, var(--ink) 90%, var(--ground)); }
+    .btn-ghost:hover { background: color-mix(in oklab, var(--ink) 4%, var(--surface)); }
+    .btn-danger-quiet:hover { background: color-mix(in oklab, var(--error) 6%, var(--surface)); }
   }
 
-  /* ---------- Footer ---------- */
-
-  .modal-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 20px;
-    padding-top: 16px;
-    border-top: 1px solid var(--hairline-soft);
+  @media (max-width: 400px) {
+    .btn-danger-quiet { flex: 1 0 100%; text-align: left; margin-right: 0; }
+    .btn-ghost, .btn-primary { flex: 1; }
   }
-
-  /* ---------- Preference guards ---------- */
 
   @media (prefers-reduced-motion: reduce) {
-    .overlay, .modal, .btn, .text-input, .select-input { transition: none; }
+    .modal, .scrim, .btn, .control, .app-nav a { transition: none; }
     .btn:active { transform: none; }
-  }
-
-  @media (prefers-reduced-transparency: reduce) {
-    .overlay { backdrop-filter: none; }
-  }
-
-  @media (prefers-contrast: more) {
-    :root {
-      --hairline: color-mix(in oklab, var(--ink) 32%, transparent);
-      --hairline-soft: color-mix(in oklab, var(--ink) 24%, transparent);
-    }
   }
 </style>
 </head>
 <body>
 
   <!-- Dimmed page behind the modal -->
-  <nav class="page-nav" aria-hidden="true">
-    <span class="brand">Acme</span>
-    <a href="#">Projects</a>
-    <a href="#">Members</a>
-    <a href="#">Billing</a>
-  </nav>
-  <main class="page-body" aria-hidden="true">
-    <h1>Projects</h1>
-    <p>Everything your team is working on right now, grouped by workspace. Open a project to see drafts, activity, and who's editing.</p>
-    <p>Recently active: Launch site refresh, Q3 onboarding flow, and the pricing page experiment.</p>
-  </main>
+  <div inert>
+    <header class="app-header">
+      <span class="wordmark">Chapterly</span>
+      <nav class="app-nav" aria-label="Main">
+        <a href="#">My clubs</a>
+        <a href="#">Discover</a>
+        <a href="#">Shelf</a>
+      </nav>
+      <span class="me" aria-hidden="true">A</span>
+    </header>
+
+    <main class="page">
+      <h1>Maple Street Readers</h1>
+      <p class="meta">8 members · Meets every two weeks · Elmwood, fictional neighborhood</p>
+
+      <section class="card">
+        <div class="card-title">
+          Next meeting
+          <span class="status-pill"><span class="dot" aria-hidden="true"></span>RSVP open</span>
+        </div>
+        <p class="book">The Lighthouse Keeper's Almanac</p>
+        <p class="when">Thursday, Sep 10 · 7:00 pm · Elm Street Library, Room B</p>
+      </section>
+    </main>
+  </div>
 
   <!-- Modal -->
-  <div class="overlay">
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="ws-title">
+  <div class="scrim" aria-hidden="true"></div>
+  <div class="dialog-layer">
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
       <header class="modal-header">
-        <h2 id="ws-title">Workspace settings</h2>
-        <p>Changes apply to everyone in this workspace.</p>
+        <h2 class="modal-title" id="modal-title">Club settings</h2>
+        <p class="modal-sub">Changes apply to everyone in Maple Street Readers.</p>
       </header>
 
       <form>
-        <div class="field field-error">
-          <label class="field-label" for="ws-name">Workspace name</label>
-          <input class="text-input" type="text" id="ws-name" value="Acme HQ"
-                 aria-invalid="true" aria-describedby="ws-name-error">
-          <span class="helper-error" id="ws-name-error">That name is already taken in your organization.</span>
+        <div class="field has-error">
+          <label for="club-name">Club name</label>
+          <input
+            class="control"
+            type="text"
+            id="club-name"
+            name="club-name"
+            value="The Wednesday Evening Chapter &amp; Verse Society of Elmwood"
+            aria-invalid="true"
+            aria-describedby="club-name-error"
+          >
+          <p class="field-error" id="club-name-error">Keep the name under 40 characters.</p>
         </div>
 
         <div class="field">
-          <label class="field-label" for="ws-role">Default member role</label>
-          <select class="select-input" id="ws-role">
-            <option>Owner</option>
-            <option selected>Admin</option>
-            <option>Editor</option>
-            <option>Viewer</option>
-          </select>
+          <label for="frequency">Meeting frequency</label>
+          <div class="select-wrap">
+            <select class="control" id="frequency" name="frequency">
+              <option>Every week</option>
+              <option selected>Every two weeks</option>
+              <option>Monthly</option>
+              <option>Every other month</option>
+            </select>
+          </div>
         </div>
 
-        <fieldset class="field check-group">
+        <fieldset class="group">
           <legend>Notifications</legend>
-          <label class="check-row">
-            <input type="checkbox" checked>
-            <span>Email notifications</span>
+          <label class="check-row" for="reminders">
+            <input type="checkbox" id="reminders" name="reminders" checked>
+            <span>
+              <span class="check-label">Meeting reminders</span>
+              <span class="check-desc" style="display:block">A nudge the day before each meeting.</span>
+            </span>
           </label>
-          <label class="check-row">
-            <input type="checkbox">
-            <span>Weekly digest <span class="check-hint">— Mondays at 9am</span></span>
+          <label class="check-row" for="recap">
+            <input type="checkbox" id="recap" name="recap">
+            <span>
+              <span class="check-label">Monthly recap email</span>
+              <span class="check-desc" style="display:block">What the club read, rated, and picked next.</span>
+            </span>
           </label>
         </fieldset>
 
-        <div class="danger-row">
-          <div class="danger-copy">
-            <div class="danger-title">Delete workspace</div>
-            <div class="danger-sub">This can't be undone.</div>
-          </div>
-          <button type="button" class="btn btn-danger">Delete</button>
-        </div>
-
         <footer class="modal-footer">
+          <button type="button" class="btn btn-danger-quiet">Leave club</button>
           <button type="button" class="btn btn-ghost">Cancel</button>
           <button type="submit" class="btn btn-primary">Save changes</button>
         </footer>
       </form>
-    </div>
+    </section>
   </div>
 
 </body>

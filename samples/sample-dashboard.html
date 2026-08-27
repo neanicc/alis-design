@@ -3,25 +3,24 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Judging overview</title>
+<title>Kilnhouse</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --ground: oklch(98% 0.004 85);
+    --ground: #f7f6f3;
     --surface: #fffdfb;
     --ink: oklch(19% 0.008 80);
-    --text-2: oklch(50% 0.01 80);
-    --text-3: oklch(68% 0.01 80);
-    --hairline: color-mix(in oklab, var(--ink) 12%, transparent);
-    --hairline-soft: color-mix(in oklab, var(--ink) 8%, transparent);
     --accent: #b44b3d;
+    --text-2: color-mix(in oklab, var(--ink) 62%, var(--ground));
+    --text-3: color-mix(in oklab, var(--ink) 45%, var(--ground));
+    --hairline: color-mix(in oklab, var(--ink) 12%, transparent);
     --pill-fill: color-mix(in oklab, var(--ink) 6%, var(--surface));
-    --dot-success: #4a6b28;
-    --dot-warn: #c0892a;
-    --dot-neutral: color-mix(in oklab, var(--ink) 32%, var(--surface));
-    --bar-rest: color-mix(in oklab, var(--ink) 13%, var(--surface));
+    --bar-tint: color-mix(in oklab, var(--ink) 16%, var(--ground));
+    --ok: #4a6b28;
+    --warn: #c0892a;
+    --err: #b03a2f;
     --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   }
 
@@ -32,189 +31,162 @@
     color: var(--ink);
     font-family: "Geist", -apple-system, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
     font-size: 14px;
-    line-height: 1.5;
+    line-height: 1.45;
     -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
   }
 
-  .page {
-    max-width: 880px;
+  .wrap {
+    max-width: 720px;
     margin: 0 auto;
-    padding: 48px 24px 64px;
+    padding: 44px 20px 64px;
   }
 
-  /* ---- Page header ---- */
-  .page-header { margin-bottom: 28px; }
-  .page-header h1 {
+  /* Page header */
+  .page-head { margin-bottom: 26px; }
+  .page-head h1 {
     font-size: 22px;
     font-weight: 600;
     letter-spacing: -0.015em;
-    line-height: 1.25;
+    line-height: 1.2;
   }
-  .page-header p {
-    margin-top: 4px;
-    color: var(--text-2);
+  .page-head p {
+    margin-top: 6px;
     font-size: 14px;
+    color: var(--text-2);
   }
 
-  /* ---- Stat tiles ---- */
+  /* Cards */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: 16px;
+    opacity: 1;
+    translate: 0 0;
+    transition: opacity 420ms ease, translate 420ms var(--ease-out);
+  }
+  @starting-style {
+    .card { opacity: 0; translate: 0 6px; }
+  }
+
+  .card-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  .card-head h2 {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .card-note {
+    font-size: 12px;
+    color: var(--text-3);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Stat tiles */
   .stats {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 12px;
     margin-bottom: 12px;
   }
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--hairline-soft);
-    border-radius: 16px;
-  }
   .stat {
-    padding: 18px 20px;
-  }
-  .stat .label {
-    color: var(--text-2);
-    font-size: 13px;
-    font-weight: 400;
-  }
-  .stat .value {
-    margin-top: 8px;
-    font-size: 26px;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-    line-height: 1.1;
-    font-variant-numeric: tabular-nums;
-  }
-  .stat .hint {
-    margin-top: 4px;
-    color: var(--text-3);
-    font-size: 12px;
-  }
-
-  /* ---- Weekly chart ---- */
-  .chart-card { padding: 18px 20px 14px; margin-bottom: 12px; }
-  .chart-head {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    margin-bottom: 8px;
-  }
-  .chart-head h2 {
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-  }
-  .chart-head .range {
-    color: var(--text-3);
-    font-size: 12px;
-    font-variant-numeric: tabular-nums;
-  }
-  .bars {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 10px;
-    align-items: end;
-    height: 116px;
-  }
-  .bar {
+    padding: 16px 18px;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
-    height: 100%;
+    gap: 8px;
   }
-  .bar i {
-    display: block;
-    background: var(--bar-rest);
-    border-radius: 6px 6px 3px 3px;
-    min-height: 4px;
-  }
-  .bar.today i { background: var(--ink); }
-  .day-labels {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 10px;
-    margin-top: 8px;
-    padding-top: 8px;
-    border-top: 1px solid var(--hairline-soft);
-  }
-  .day-labels span {
-    color: var(--text-3);
-    font-size: 11px;
-    text-align: center;
-  }
-  .day-labels span.today { color: var(--ink); font-weight: 500; }
-
-  /* ---- Recent submissions ---- */
-  .list-card { overflow: hidden; }
-  .list-head {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    padding: 16px 20px 12px;
-  }
-  .list-head h2 {
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-  }
-  .view-all {
-    position: relative;
-    color: var(--ink);
+  .stat dt {
     font-size: 13px;
     font-weight: 500;
-    text-decoration: none;
+    color: var(--text-2);
   }
-  .view-all::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    bottom: -2px;
+  .stat dd {
+    font-size: 27px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Weekly bookings chart */
+  .chart-card { padding: 18px 20px; margin-bottom: 12px; }
+  .chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    height: 148px;
+    padding-top: 4px;
+  }
+  .col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    height: 100%;
+    min-width: 0;
+  }
+  .col .bar {
     width: 100%;
-    height: 1px;
-    background: currentColor;
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.3s var(--ease-out);
+    max-width: 44px;
+    background: var(--bar-tint);
+    border-radius: 6px 6px 2px 2px;
   }
+  .col .day {
+    font-size: 12px;
+    color: var(--text-3);
+  }
+  /* Signature moment: today's bar carries full ink and its live count —
+     the one element on the surface encoding real (in-progress) state. */
+  .col.today .bar { background: var(--ink); }
+  .col.today .day { color: var(--ink); font-weight: 500; }
+  .bar-value {
+    font-size: 12px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+
+  /* Recent bookings */
+  .bookings { padding: 18px 20px 8px; }
+  .rows { list-style: none; }
   .row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
-    padding: 11px 20px;
-    border-top: 1px solid var(--hairline-soft);
-    text-decoration: none;
-    color: inherit;
-    transition: background-color 160ms var(--ease-out);
+    gap: 12px;
+    padding: 11px 0;
+    border-top: 1px solid var(--hairline);
   }
-  .row .who { min-width: 0; }
-  .row .project {
+  .row:first-child { border-top: 0; }
+  .who {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+  .who .name {
     font-size: 14px;
     font-weight: 500;
-    letter-spacing: -0.005em;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .row .team {
+  .who .class {
+    font-size: 13px;
     color: var(--text-2);
-    font-size: 12.5px;
-    margin-top: 1px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-  .row-end {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-shrink: 0;
-  }
-  .row .arrow {
-    color: var(--text-3);
-    transition: transform 150ms var(--ease-out);
   }
 
-  /* Status pill: soft neutral fill, no border, ink text, 6px semantic dot */
+  /* Status pill: neutral fill, no border, 6px semantic dot */
   .pill {
     display: inline-flex;
     align-items: center;
@@ -223,153 +195,181 @@
     padding: 0 11px;
     border-radius: 999px;
     background: var(--pill-fill);
-    color: var(--ink);
     font-size: 11px;
     font-weight: 500;
+    color: var(--ink);
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
-  }
-  .pill .dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
     flex-shrink: 0;
   }
-  .dot-success { background: var(--dot-success); }
-  .dot-warn    { background: var(--dot-warn); }
-  .dot-neutral { background: var(--dot-neutral); }
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    flex-shrink: 0;
+  }
+  .dot.ok { background: var(--ok); }
+  .dot.warn { background: var(--warn); }
+  .dot.err { background: var(--err); }
 
-  :is(.view-all, .row):focus-visible {
+  /* View all link: ink + animated underline */
+  .view-all {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    transition: transform 150ms var(--ease-out);
+  }
+  .view-all::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -2px;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 300ms var(--ease-out);
+  }
+  .view-all .arrow {
+    display: inline-block;
+    transition: transform 150ms var(--ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .view-all:hover { transform: translateY(-1px); }
+    .view-all:hover::after { transform: scaleX(1); }
+    .view-all:hover .arrow { transform: translateX(2px); }
+  }
+  .view-all:active { transform: scale(0.97); }
+  .view-all:focus-visible {
     outline: 2px solid var(--accent);
-    outline-offset: 2px;
+    outline-offset: 3px;
     border-radius: 4px;
   }
 
-  @media (hover: hover) and (pointer: fine) {
-    .view-all:hover::after { transform: scaleX(1); }
-    .view-all:hover { transform: translateY(-1px); }
-    .view-all { transition: transform 150ms var(--ease-out); display: inline-block; }
-    .row:hover { background: color-mix(in oklab, var(--ink) 3%, var(--surface)); }
-    .row:hover .arrow { transform: translateX(2px); }
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
-  .row:active { transform: scale(0.99); }
 
-  /* Entrance: once per load */
-  @supports (transition-behavior: allow-discrete) {
-    @starting-style {
-      .page > * { opacity: 0; translate: 0 7px; }
-    }
-    .page > * { transition: opacity 400ms var(--ease-out), translate 400ms var(--ease-out); }
+  @media (max-width: 540px) {
+    .stats { grid-template-columns: 1fr; }
+    .chart { gap: 8px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
-      transition-duration: 0.01ms !important;
-      animation-duration: 0.01ms !important;
-    }
-  }
-
-  @media (max-width: 560px) {
-    .page { padding: 32px 16px 48px; }
-    .stats { grid-template-columns: 1fr; }
-    .row .team { white-space: normal; }
+    .card,
+    .view-all,
+    .view-all::after,
+    .view-all .arrow { transition: none; }
   }
 </style>
 </head>
 <body>
-  <main class="page">
+  <main class="wrap">
 
-    <header class="page-header">
-      <h1>Judging overview</h1>
-      <p>Live scoring progress for HackWaterloo 2026, updated as judges submit.</p>
+    <header class="page-head">
+      <h1>Studio overview</h1>
+      <p>Bookings, seats, and class activity across the Kilnhouse studio.</p>
     </header>
 
-    <section class="stats" aria-label="Key figures">
+    <dl class="stats">
       <div class="card stat">
-        <div class="label">Submissions</div>
-        <div class="value">214</div>
-        <div class="hint">Across all tracks</div>
+        <dt>Bookings this month</dt>
+        <dd>128</dd>
       </div>
       <div class="card stat">
-        <div class="label">Judges online</div>
-        <div class="value">12</div>
-        <div class="hint">Of 18 assigned</div>
+        <dt>Open seats</dt>
+        <dd>23</dd>
       </div>
       <div class="card stat">
-        <div class="label">Average score</div>
-        <div class="value">7.8</div>
-        <div class="hint">Out of 10</div>
+        <dt>Avg class rating</dt>
+        <dd>4.7</dd>
+      </div>
+    </dl>
+
+    <section class="card chart-card">
+      <div class="card-head">
+        <h2>Weekly bookings</h2>
+        <span class="card-note">Last 7 days</span>
+      </div>
+      <div class="chart" role="img" aria-label="Bookings per day over the last 7 days: Friday 22, Saturday 31, Sunday 27, Monday 14, Tuesday 18, Wednesday 21, and Thursday, today so far, 17.">
+        <div class="col">
+          <div class="bar" style="height: 71%"></div>
+          <span class="day">Fri</span>
+        </div>
+        <div class="col">
+          <div class="bar" style="height: 100%"></div>
+          <span class="day">Sat</span>
+        </div>
+        <div class="col">
+          <div class="bar" style="height: 87%"></div>
+          <span class="day">Sun</span>
+        </div>
+        <div class="col">
+          <div class="bar" style="height: 45%"></div>
+          <span class="day">Mon</span>
+        </div>
+        <div class="col">
+          <div class="bar" style="height: 58%"></div>
+          <span class="day">Tue</span>
+        </div>
+        <div class="col">
+          <div class="bar" style="height: 68%"></div>
+          <span class="day">Wed</span>
+        </div>
+        <div class="col today">
+          <span class="bar-value">17</span>
+          <div class="bar" style="height: 55%"></div>
+          <span class="day">Thu</span>
+        </div>
       </div>
     </section>
 
-    <section class="card chart-card" aria-label="Submissions this week">
-      <div class="chart-head">
-        <h2>Submissions this week</h2>
-        <span class="range">Aug 21 – 27</span>
+    <section class="card bookings">
+      <div class="card-head">
+        <h2>Recent bookings</h2>
+        <a class="view-all" href="#all-bookings">View all<span class="arrow" aria-hidden="true">&rarr;</span></a>
       </div>
-      <div class="bars" role="img" aria-label="Daily submissions, Thursday 18, Friday 26, Saturday 22, Sunday 31, Monday 38, Tuesday 44, Wednesday 35">
-        <div class="bar" title="Thu · 18"><i style="height: 41%"></i></div>
-        <div class="bar" title="Fri · 26"><i style="height: 59%"></i></div>
-        <div class="bar" title="Sat · 22"><i style="height: 50%"></i></div>
-        <div class="bar" title="Sun · 31"><i style="height: 70%"></i></div>
-        <div class="bar" title="Mon · 38"><i style="height: 86%"></i></div>
-        <div class="bar" title="Tue · 44"><i style="height: 100%"></i></div>
-        <div class="bar today" title="Wed · 35, today"><i style="height: 80%"></i></div>
-      </div>
-      <div class="day-labels" aria-hidden="true">
-        <span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span><span>Mon</span><span>Tue</span><span class="today">Wed</span>
-      </div>
-    </section>
-
-    <section class="card list-card" aria-label="Recent submissions">
-      <div class="list-head">
-        <h2>Recent submissions</h2>
-        <a class="view-all" href="#">View all</a>
-      </div>
-
-      <a class="row" href="#">
-        <div class="who">
-          <div class="project">Trailhead</div>
-          <div class="team">Team Cartographers</div>
-        </div>
-        <div class="row-end">
-          <span class="pill"><span class="dot dot-success" aria-hidden="true"></span>Scored 8.6</span>
-          <span class="arrow" aria-hidden="true">&rarr;</span>
-        </div>
-      </a>
-
-      <a class="row" href="#">
-        <div class="who">
-          <div class="project">Ledgerline</div>
-          <div class="team">Two Commas</div>
-        </div>
-        <div class="row-end">
-          <span class="pill"><span class="dot dot-success" aria-hidden="true"></span>Scored 7.4</span>
-          <span class="arrow" aria-hidden="true">&rarr;</span>
-        </div>
-      </a>
-
-      <a class="row" href="#">
-        <div class="who">
-          <div class="project">Willow Notes</div>
-          <div class="team">Night Owls</div>
-        </div>
-        <div class="row-end">
-          <span class="pill"><span class="dot dot-warn" aria-hidden="true"></span>In review</span>
-          <span class="arrow" aria-hidden="true">&rarr;</span>
-        </div>
-      </a>
-
-      <a class="row" href="#">
-        <div class="who">
-          <div class="project">Pocket Radar</div>
-          <div class="team">Signal &amp; Noise</div>
-        </div>
-        <div class="row-end">
-          <span class="pill"><span class="dot dot-neutral" aria-hidden="true"></span>Queued</span>
-          <span class="arrow" aria-hidden="true">&rarr;</span>
-        </div>
-      </a>
+      <ul class="rows">
+        <li class="row">
+          <div class="who">
+            <span class="name">Maren Oduya</span>
+            <span class="class">Wheel throwing basics</span>
+          </div>
+          <span class="pill"><span class="dot ok" aria-hidden="true"></span>Confirmed</span>
+        </li>
+        <li class="row">
+          <div class="who">
+            <span class="name">Theo Lindqvist</span>
+            <span class="class">Glaze chemistry</span>
+          </div>
+          <span class="pill"><span class="dot warn" aria-hidden="true"></span>Waitlisted</span>
+        </li>
+        <li class="row">
+          <div class="who">
+            <span class="name">Priya Rasmussen</span>
+            <span class="class">Raku firing night</span>
+          </div>
+          <span class="pill"><span class="dot ok" aria-hidden="true"></span>Confirmed</span>
+        </li>
+        <li class="row">
+          <div class="who">
+            <span class="name">Callum Bright</span>
+            <span class="class">Handbuilding I</span>
+          </div>
+          <span class="pill"><span class="dot err" aria-hidden="true"></span>Cancelled</span>
+        </li>
+      </ul>
     </section>
 
   </main>

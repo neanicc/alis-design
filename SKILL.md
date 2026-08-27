@@ -7,7 +7,7 @@ description: Use when building, restyling, or reviewing any UI in Ali's projects
 
 ## Overview
 
-Ali's taste, distilled from shipped work (dev-edit extension, mangement_portal/admin_financials, ali-imran-portfolio): **quiet warm surfaces, near-black ink, one weighted action, and motion that encodes real state.** The fastest way to fail is decoration that carries no information — Ali deletes it on sight ("green glowing dots that serve no purpose"). The fastest way to win is restraint executed precisely: exact spacing, exact alignment, one signature element.
+Ali's taste, distilled from shipped work (a browser extension, an internal management portal, a personal portfolio): **quiet warm surfaces, near-black ink, one weighted action, and motion that encodes real state.** The fastest way to fail is decoration that carries no information — Ali deletes it on sight ("green glowing dots that serve no purpose"). The fastest way to win is restraint executed precisely: exact spacing, exact alignment, one signature element.
 
 **Violating the letter of this profile is producing the AI-slop Ali rejects.**
 
@@ -56,7 +56,7 @@ Any site may need multiple themes, or a wholesale recolor later. Both are cheap 
 
 - **Components never name a color.** Every `background`, `color`, `border-color`, `fill`, `box-shadow`, and `accent-color` references a token (`var(--ink)`, `var(--surface)`, …), and every hover/active/tint/hairline is **derived** via `color-mix` from those tokens. Then a theme (or a full rebrand) is one `:root` block — nothing else changes, and every derived state re-harmonizes automatically. A raw hex inside a component is a bug even if there's only one theme today.
 - **A theme is a small named set** — ground, surface, accent, ink (text tiers and hairlines derive from ink) — applied via `:root[data-theme="name"]` and persisted in `localStorage` (`<app>:theme` key). Default: the warm light theme; honor `prefers-color-scheme` only when the user hasn't picked.
-- **The accent-harmony rule applies per theme**: each theme's accent is chosen for *that* ground's temperature. Ali's shipped axibo set is the canon:
+- **The accent-harmony rule applies per theme**: each theme's accent is chosen for *that* ground's temperature. Ali's shipped five-theme set is the canon:
 
   | Theme | Ground | Accent | Why it matches |
   |---|---|---|---|
@@ -127,7 +127,7 @@ Theme pickers render as swatch buttons (ground + accent dot per swatch, the Them
 - Floating chrome (navbars, toolbars) = translucent glass: `backdrop-filter: blur(16-20px) saturate(1.4-1.6)`, warm-tinted semi-transparent bg, hairline border, sticky with a top gap.
 - **Two sanctioned chip patterns — pick by what the color means:**
   - **Identity chip** (peers, owners, categories — the color IS the identity): 1px border in the item's color + 7–12% tint fill + colored text. State change = border strengthens to 2px + tint deepens. Never solid-fill, never overlapping initials.
-  - **Status pill** (workflow states — approved, in review, queued, on-track, at-risk, overdue): the mangement_portal look. **Soft warm-neutral fill, NO border** — fill ≈ `color-mix(in oklab, var(--ink) 6%, var(--surface))`, **ink text** at weight 500, 11px, ~20px height (17/24 sm/lg), tabular-nums, generous side padding (10–12px), full radius — with a **6px semantic dot** on the left carrying the only color (success `#4a6b28` · warn `#c0892a` · error `#b03a2f` family, or theme tokens), `aria-hidden` because the label text already states the status. Never a hairline-outlined transparent pill for statuses, never a saturated colored fill, never a bold colored label — the saturated version is the "straight slop" this spec replaced.
+  - **Status pill** (workflow states — approved, in review, queued, on-track, at-risk, overdue): the management-portal look Ali shipped and screenshot-approved. **Soft warm-neutral fill, NO border** — fill ≈ `color-mix(in oklab, var(--ink) 6%, var(--surface))`, **ink text** at weight 500, 11px, ~20px height (17/24 sm/lg), tabular-nums, generous side padding (10–12px), full radius — with a **6px semantic dot** on the left carrying the only color (success `#4a6b28` · warn `#c0892a` · error `#b03a2f` family, or theme tokens), `aria-hidden` because the label text already states the status. Never a hairline-outlined transparent pill for statuses, never a saturated colored fill, never a bold colored label — the saturated version is the "straight slop" this spec replaced.
 - Whole card is the click target; a small "Read →" alone is not affordance.
 
 ## Motion
@@ -142,7 +142,7 @@ Theme pickers render as swatch buttons (ground + accent dot per swatch, the Them
 
 ## Floating layers & controls
 
-- **Tooltips are always custom** — the native `title` attribute is banned (Ali has replaced it in every project). The mangement_portal recipe: inverted-contrast bubble (**ink bg, paper text**), 11px/500, 6–8px radius, small soft shadow, positioned ~6px off the trigger with center/start/end alignment for viewport edges. Reveal: **~500ms delay on hover** (kills flicker), **instant on `:focus-visible`**, fade + scale from 0.97 over 125–150ms ease-out with `transform-origin` toward the trigger. Once one tooltip is open, adjacent ones open with no delay and no animation. A11y: tooltip `aria-hidden` with the trigger carrying `aria-label` (or `role="tooltip"`), and it must never be the only way to get the information. In stacks, hovering lifts the trigger (`z` raise) above neighbors.
+- **Tooltips are always custom** — the native `title` attribute is banned (Ali has replaced it in every project). The recipe Ali shipped twice: inverted-contrast bubble (**ink bg, paper text**), 11px/500, 6–8px radius, small soft shadow, positioned ~6px off the trigger with center/start/end alignment for viewport edges. Reveal: **~500ms delay on hover** (kills flicker), **instant on `:focus-visible`**, fade + scale from 0.97 over 125–150ms ease-out with `transform-origin` toward the trigger. Once one tooltip is open, adjacent ones open with no delay and no animation. A11y: tooltip `aria-hidden` with the trigger carrying `aria-label` (or `role="tooltip"`), and it must never be the only way to get the information. In stacks, hovering lifts the trigger (`z` raise) above neighbors.
 - **Sliders / draggable controls**: track = warm hairline-tint; filled portion = ink (accent only if the value is the accent's job); thumb = white pill with hairline + soft shadow. The thumb tracks the pointer **1:1 while dragging** (never eased toward the finger); press = `scale(0.97)`–grab feedback; on release, snapping/settling may use the strong ease-out or a spring with bounce ≤ 0.2 (momentum earns bounce). Value readout uses the tooltip bubble above the thumb, live while dragging. Keyboard: arrow steps with visible focus ring.
 - **Switches/steppers/segmented controls**: the moving indicator is a shared-layout slide (Framer `layoutId` or transform), 140–200ms strong ease-out, `accent-color`/fills from ink. Same reduced-motion collapse as everything else: state changes remain, travel goes.
 
