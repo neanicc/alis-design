@@ -68,22 +68,3 @@ Or clone and copy. Reload skills (or restart Claude Code) and it auto-triggers o
 ## Samples
 
 Both Driftwell pages live in [`samples/`](samples/) (`landing-no-skill.html` and `landing-with-skill.html`), alongside more cold-build outputs on invented subjects: a pottery-studio booking dashboard, a book-club settings modal with the custom dropdown, a brew-timer card with tooltips and a slider, and a four-theme hiking-log switcher. Each is a single self-contained HTML file; open it in a browser. The themes one persists your pick in localStorage and eases the switch only during the change, never on load.
-
-## How it got its rules
-
-Ten correction rounds so far, each one anchored to a real piece of feedback and verified by rerunning the same brief cold:
-
-| Round | Correction | Rule that came out of it |
-|---|---|---|
-| 1 | Baseline profile mined from memory across four projects | The token system, type, motion, spacing, banned list |
-| 2 | "The blue does not match at all with the rest of the page" | Accent harmony: accents share the ground's temperature or get ink-mixed |
-| 3 | A status pill from an earlier project, screenshot as spec | Neutral pill + 6px semantic dot for workflow states |
-| 4 | "This is what I see rn. Is this correct or did u copy it wrong?" | Screenshot beats documentation: pills are borderless soft fill, not hairline outline |
-| 5 | Tooltips and sliders weren't covered | Floating layers and controls section; native `title` banned |
-| 6 | Multi-theme sites should re-harmonize, not hardcode | Theming section with per-theme accents and eased switching |
-| 7 | "It shouldn't assume Playfair for the title" | Open axes: ask before assuming, declare defaults when you can't ask |
-| 8 | The floating nav should ease into a full bar on scroll; the footer had lost content the baseline kept | Scroll-responsive nav morph as the landing default; restraint cuts decoration, not navigation |
-| 9 | "The dropdown should be the exact same one" as an earlier project's, same motion and look | Custom combobox + listbox recipe (180ms scale-from-0.95 pop, rotating chevron, one moving highlight, accent checkmark); native `<select>` banned |
-| 10 | "The custom drawn is very nice" — a side-by-side of two checkbox styles, and the drawn one won | Drawn 18px checkbox over `accent-color`-tinted native: hidden native input, ink fill, tick scaling 0.8 → 1, accent focus ring; radios follow |
-
-The white-button round hides inside 6: on dark themes the primary pill is the ink token mixed 90 to 93 percent toward the ground, never pure `#fff`, because a stark white pill glows against a dark surface and reads as pasted-in.
